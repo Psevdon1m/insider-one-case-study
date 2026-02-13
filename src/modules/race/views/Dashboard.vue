@@ -2,6 +2,7 @@
 import { ref, computed, watch, nextTick } from "vue";
 import BaseHeader from "@/core/components/ui/BaseHeader.vue";
 import BaseButton from "@/core/components/ui/BaseButton.vue";
+import HorseList from "../components/HorseList.vue";
 
 import { horses } from "../domain/horses";
 import type { RaceHorse } from "../domain/types";
@@ -156,7 +157,7 @@ watch(
     <div class="flex flex-1 gap-2 p-2 overflow-hidden min-h-0">
       <!-- Left — Horse List -->
       <div class="w-56 shrink-0">
-        <pre>{{ horses }}</pre>
+        <HorseList :horses />
       </div>
 
       <!-- Center — Race Track -->
