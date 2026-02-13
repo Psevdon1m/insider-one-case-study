@@ -7,7 +7,7 @@ const props = defineProps({
    */
   gifSrc: {
     type: String,
-    default: "/horse-no-bg.gif",
+    default: "/horse-no-bg-1.gif",
   },
 
   /**
@@ -83,7 +83,7 @@ const hslColor = computed(() => {
 .horse-wrapper {
   position: relative;
   display: inline-block;
-  line-height: 0; 
+  line-height: 0;
 }
 
 .horse-ghost {

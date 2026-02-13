@@ -62,7 +62,7 @@ watch(
           <span
             class="text-[10px] text-muted-foreground w-4 shrink-0 text-center font-mono"
           >
-            {{ lane + 1 }}
+            {{ lane }}
           </span>
 
           <!--  Track area  -->
@@ -72,15 +72,14 @@ watch(
               class="absolute top-1/2 -translate-y-1/2 transition-all"
               :style="{
                 left: `${Math.min(horseByLane[lane].progress || 0, 95)}%`,
-                transitionDuration: raceStatus === 'running' ? '300ms' : '0ms',
+                transitionDuration: raceStatus === 'running' ? '200ms' : '0ms',
                 transitionTimingFunction: 'linear',
               }"
             >
               <HorseSilhouette
                 :color="horseByLane[lane]!.color"
                 :animate="
-                  horseByLane[lane].progress >= 1 &&
-                  horseByLane[lane].progress < 100
+                  horseByLane[lane].progress < 100 && raceStatus === 'running'
                 "
                 :size="50"
               />

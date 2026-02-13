@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, watch, nextTick } from "vue";
 import BaseHeader from "@/core/components/ui/BaseHeader.vue";
 import BaseButton from "@/core/components/ui/BaseButton.vue";
 
@@ -33,34 +33,26 @@ const generateProgram = () => {
   raceStatus.value = "idle";
   distance.value = 0;
 };
-const startRace = () => {
+const startRace = async () => {
   if (raceHorses.value.length === 0) return;
 
   if (raceStatus.value === "running") {
     // Pause
+    console.log("pause init");
+
     stopInterval();
+    await nextTick();
     raceStatus.value = "paused";
+
+    console.log("paused");
+
     return;
   }
 
   raceStatus.value = "running";
   intervalRef.value = setInterval(() => {
     const done = tick();
-    if (done) stopInterval();
-  }, TICK_MS);
 
-  if (raceHorses.value.length === 0) return;
-
-  if (raceStatus.value === "running") {
-    // Pause
-    stopInterval();
-    raceStatus.value = "paused";
-    return;
-  }
-
-  raceStatus.value = "running";
-  intervalRef.value = setInterval(() => {
-    const done = tick();
     if (done) stopInterval();
   }, TICK_MS);
 };
@@ -71,10 +63,12 @@ const tick = () => {
 
   const updated = raceHorses.value.map((h) => {
     if (h.finished) return h;
+
     // Speed based on condition + randomness
     const baseSpeed = 0.3 + (h.condition / 100) * 0.5;
     const randomFactor = 0.7 + Math.random() * 0.6;
     const speed = baseSpeed * randomFactor;
+
     const newProgress = Math.min(h.progress + speed, 100);
     const finished = newProgress >= 100;
 
@@ -96,10 +90,12 @@ const tick = () => {
   raceHorses.value = [...updated];
   results.value = [...currentResults];
 
-  distance.value = Math.min(
-    distance.value + Math.round(RACE_DISTANCE / 200),
-    RACE_DISTANCE,
-  );
+  if (raceStatus.value === "running") {
+    distance.value = Math.min(
+      distance.value + Math.round(RACE_DISTANCE / 200),
+      RACE_DISTANCE,
+    );
+  }
 
   if (allFinished) {
     raceStatus.value = "finished";
@@ -117,6 +113,16 @@ const stopInterval = () => {
 
 const canStart = computed(
   () => raceHorses.value.length > 0 && raceStatus.value !== "finished",
+);
+
+watch(
+  raceHorses,
+  (newVal) => {
+    if (Array.isArray(newVal)) {
+      console.log("progress of 1 horse: ", newVal[0]?.progress);
+    }
+  },
+  { deep: true },
 );
 </script>
 
