@@ -50,14 +50,14 @@ watch(
         <div
           v-for="lane in lanes"
           :key="lane"
-          class="flex items-center relative"
+          class="flex items-center relative border-l border-r"
+          :class="{ 'border-b': lane === lanes, 'border-t': lane <= lanes }"
           :style="{
             height: `${100 / lanes}%`,
-            borderBottom:
-              lane < lanes - 1 ? '1px dashed hsl(var(--border))' : 'none',
           }"
         >
           <!--  Lane number  -->
+
           <span
             class="text-[10px] text-muted-foreground w-4 shrink-0 text-center font-mono"
           >

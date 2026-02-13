@@ -167,6 +167,7 @@ const stopInterval = () => {
 };
 
 const canStart = computed(() => raceHorses.value.length > 0);
+const canGenerate = computed(() => raceHorses.value.length === 0);
 
 watch(
   raceHorses,
@@ -188,7 +189,7 @@ watch(
           size="sm"
           variant="outline"
           @click="generateProgram"
-          :disabled="raceStatus === 'running' || raceStatus === 'paused'"
+          :disabled="!canGenerate"
         >
           Generate Program
         </BaseButton>
