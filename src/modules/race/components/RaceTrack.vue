@@ -11,7 +11,6 @@ interface RaceTrackProps {
 
 const props = defineProps<RaceTrackProps>();
 
-const distance = ref(0);
 const lanes = 10;
 
 const horseByLane = ref<Record<number, RaceHorse>>({});
@@ -78,6 +77,7 @@ watch(
             >
               <HorseSilhouette
                 :color="horseByLane[lane]!.color"
+                :name="horseByLane[lane].name"
                 :animate="
                   horseByLane[lane].progress < 100 && raceStatus === 'running'
                 "
@@ -93,10 +93,12 @@ watch(
     <div
       class="px-3 py-1.5 text-xs text-muted-foreground border-t bg-muted/20 text-center"
     >
-      {{ raceStatus === "idle" && "Generate a program to start" }}
-      {{ raceStatus === "running" && `Racing — ${distance}m` }}
-      {{ raceStatus === "paused" && `Paused — ${distance}m` }}
-      {{ raceStatus === "finished" && `RaceComplete — ${distance}m` }}
+      <p v-if="raceStatus === 'idle'">Generate a program to start</p>
+      <p v-else-if="raceStatus === 'running'">Racing — {{ distance }}m</p>
+      <p v-else-if="raceStatus === 'paused'">Paused — {{ distance }}m</p>
+      <p v-else-if="raceStatus === 'finished'">
+        RaceComplete — {{ distance }}m
+      </p>
     </div>
   </div>
 </template>

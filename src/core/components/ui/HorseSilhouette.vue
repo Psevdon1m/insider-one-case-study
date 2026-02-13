@@ -43,6 +43,10 @@ const props = defineProps({
     type: String,
     default: "0 0% 0%",
   },
+  name: {
+    type: String,
+    default: "Unnamed",
+  },
 });
 
 /* choose which image to show */
@@ -58,7 +62,8 @@ const hslColor = computed(() => {
 </script>
 
 <template>
-  <div class="horse-wrapper" :style="{ width: size + 'px' }">
+  <div class="horse-wrapper" :style="{ width: size + 10 + 'px' }">
+    <p style="font-size: 8px; font-weight: bold">{{ name }}</p>
     <!-- ghost image to maintain aspect ratio/size -->
     <img
       :src="imageSrc"

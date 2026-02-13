@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import type { Horse } from "../domain/types";
+import type { Horse, RaceHorse } from "../domain/types";
 interface HorseListProps {
   horses: Horse[];
+  raceHorses: RaceHorse[];
 }
 
 defineProps<HorseListProps>();
@@ -31,7 +32,9 @@ defineProps<HorseListProps>();
           <tr
             v-for="(h, i) in horses"
             :key="h.id"
-            :class="{ 'bg-muted/30': i % 2 === 0 }"
+            :class="{
+              'bg-green-300': raceHorses.findIndex((r) => r.id === h.id) >= 0,
+            }"
           >
             <td class="px-2 py-1">{{ h.id }}</td>
             <td class="px-2 py-1 font-medium truncate max-w-25">

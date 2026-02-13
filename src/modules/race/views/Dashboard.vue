@@ -1,14 +1,23 @@
 <script setup lang="ts">
-import { ref, computed, watch, nextTick } from "vue";
+import { ref, computed, watch } from "vue";
 import BaseHeader from "@/core/components/ui/BaseHeader.vue";
 import BaseButton from "@/core/components/ui/BaseButton.vue";
 import HorseList from "../components/HorseList.vue";
 
-import { horses } from "../domain/horses";
+import { freshHorses } from "../domain/horses";
+
 import type { RaceHorse } from "../domain/types";
 import RaceTrack from "../components/RaceTrack.vue";
+import ResultsList from "../components/ResultsList.vue";
 
-const RACE_DISTANCE = 1200;
+import { ROUND_TO_DISTANCE } from "../domain/constatns";
+
+const round = ref<keyof typeof ROUND_TO_DISTANCE>(1);
+
+const currentDistance = computed<number>(() => {
+  return ROUND_TO_DISTANCE[round.value];
+});
+
 const TICK_MS = 50;
 
 const intervalRef = ref<null | number>(null);
@@ -18,9 +27,22 @@ const results = ref<{ position: number; name: string; color: string }[]>([]);
 const raceStatus = ref<"idle" | "running" | "paused" | "finished">("idle");
 const distance = ref(0);
 
+const resultsPerRound = ref<Record<typeof round.value, typeof results.value>>({
+  1: [],
+  2: [],
+  3: [],
+  4: [],
+  5: [],
+  6: [],
+});
+
+const horses = ref(freshHorses);
+
 const generateProgram = () => {
   if (intervalRef.value) clearInterval(intervalRef.value);
-  const shuffled = [...horses].sort(() => Math.random() - 0.5).slice(0, 10);
+  const shuffled = [...horses.value]
+    .sort(() => Math.random() - 0.5)
+    .slice(0, 10);
   const programmed: RaceHorse[] = shuffled.map((h, i) => ({
     ...h,
     lane: i + 1,
@@ -39,13 +61,9 @@ const startRace = async () => {
 
   if (raceStatus.value === "running") {
     // Pause
-    console.log("pause init");
 
     stopInterval();
-    await nextTick();
     raceStatus.value = "paused";
-
-    console.log("paused");
 
     return;
   }
@@ -54,7 +72,16 @@ const startRace = async () => {
   intervalRef.value = setInterval(() => {
     const done = tick();
 
-    if (done) stopInterval();
+    if (done) {
+      stopInterval();
+
+      round.value = ((round.value % 6) + 1) as keyof typeof ROUND_TO_DISTANCE; //allows rounds to inc only till 6, then reset to 1
+      results.value = [];
+      setTimeout(() => {
+        prepareForNextRound();
+        raceStatus.value = "idle";
+      }, 3000);
+    }
   }, TICK_MS);
 };
 
@@ -86,15 +113,16 @@ const tick = () => {
     return { ...h, progress: newProgress, finished };
   });
 
-  raceHorses.value = updated;
-  results.value = currentResults;
   raceHorses.value = [...updated];
   results.value = [...currentResults];
+  if (resultsPerRound.value) {
+    resultsPerRound.value[round.value] = [...results.value];
+  }
 
   if (raceStatus.value === "running") {
     distance.value = Math.min(
-      distance.value + Math.round(RACE_DISTANCE / 200),
-      RACE_DISTANCE,
+      distance.value + Math.round(currentDistance.value / 200),
+      currentDistance.value,
     );
   }
 
@@ -105,6 +133,32 @@ const tick = () => {
   return false;
 };
 
+const prepareForNextRound = () => {
+  //todo fix duplicates
+  const currentResults = [...results.value];
+
+  const updated = raceHorses.value.map((h) => {
+    if (h.finished) {
+      currentResults.push({
+        position: currentResults.length + 1,
+        name: h.name,
+        color: h.color,
+      });
+    }
+
+    const tireness = Math.floor(Math.random() * 10);
+
+    return {
+      ...h,
+      progress: 0,
+      condition: h.condition - tireness,
+      finished: false,
+    };
+  });
+
+  raceHorses.value = [...updated];
+};
+
 const stopInterval = () => {
   if (intervalRef.value) {
     clearInterval(intervalRef.value);
@@ -112,9 +166,7 @@ const stopInterval = () => {
   }
 };
 
-const canStart = computed(
-  () => raceHorses.value.length > 0 && raceStatus.value !== "finished",
-);
+const canStart = computed(() => raceHorses.value.length > 0);
 
 watch(
   raceHorses,
@@ -136,7 +188,7 @@ watch(
           size="sm"
           variant="outline"
           @click="generateProgram"
-          :disabled="raceStatus !== 'idle'"
+          :disabled="raceStatus === 'running' || raceStatus === 'paused'"
         >
           Generate Program
         </BaseButton>
@@ -146,7 +198,7 @@ watch(
               ? "Pause"
               : raceStatus === "paused"
                 ? "Resume"
-                : "Start"
+                : `Start Round: #${round}`
           }}
         </BaseButton>
       </div>
@@ -156,18 +208,18 @@ watch(
     <!-- Main content -->
     <div class="flex flex-1 gap-2 p-2 overflow-hidden min-h-0">
       <!-- Left — Horse List -->
-      <div class="w-56 shrink-0">
-        <HorseList :horses />
+      <div class="w-md shrink-0">
+        <HorseList :horses :raceHorses />
       </div>
 
       <!-- Center — Race Track -->
-      <div class="flex-1 min-w-0">
+      <div class="w-4xl">
         <RaceTrack :raceHorses :raceStatus :distance />
       </div>
 
       <!-- Right — Program & Results  -->
-      <div class="w-48 shrink-0">
-        <pre>{{ results }}</pre>
+      <div class="w-xl h-full overflow-scroll">
+        <ResultsList :program="raceHorses" :results="resultsPerRound" />
       </div>
     </div>
     <!-- /MainContent -->
