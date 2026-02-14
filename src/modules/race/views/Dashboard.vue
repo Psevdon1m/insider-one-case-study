@@ -285,19 +285,19 @@ const canGenerate = computed(
     <!-- /Header -->
 
     <!-- Main content -->
-    <div class="flex flex-1 gap-2 p-2 overflow-hidden min-h-0">
+    <div class="flex flex-1 flex-col 2xl:flex-row gap-2 p-2 overflow-y-auto 2xl:overflow-hidden min-h-0">
       <!-- Left — Horse List -->
-      <div class="w-md shrink-0">
+      <div class="w-full 2xl:w-xs shrink-0 order-2 2xl:order-1">
         <HorseList :horses :raceHorses />
       </div>
 
       <!-- Center — Race Track -->
-      <div class="w-4xl">
+      <div class="w-full 2xl:w-4xl overflow-auto order-1 2xl:order-2 min-h-[500px]">
         <RaceTrack :raceHorses :raceStatus :distance :raceLeader />
       </div>
 
       <!-- Right — Program & Results  -->
-      <div class="w-xl h-full overflow-scroll">
+      <div class="w-full 2xl:w-xl min-h-[400px] 2xl:h-full overflow-auto order-3 2xl:order-3">
         <ResultsList :program="raceHorses" :results="resultsPerRound" />
       </div>
     </div>

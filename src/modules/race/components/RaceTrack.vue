@@ -26,7 +26,7 @@ watch(
 </script>
 <template>
   <div
-    class="flex flex-col h-full border rounded-lg bg-card shadow-sm overflow-hidden"
+    class="flex flex-col h-full border rounded-lg bg-card shadow-sm overflow-hidden min-w-[800px] min-h-[500px]"
   >
     <div class="px-3 py-2 text-sm font-semibold border-b bg-muted/30">
       Race Track
@@ -35,12 +35,12 @@ watch(
       <!--  Finish line  -->
       <div
         class="absolute top-2 bottom-10 w-1 z-10"
-        :style="{ right: '16px', background: 'hsl(0 72% 51%)' }"
+        :style="{ left: '95%', background: 'hsl(0 72% 51%)' }"
       />
       <div
         class="absolute top-2 bottom-10 w-3 z-10 opacity-20"
         :style="{
-          right: '12px',
+          left: 'calc(95% + 4px)',
           background:
             'repeating-linear-gradient(0deg, hsl(0 72% 51%) 0px, hsl(0 72% 51%) 4px, transparent 4px, transparent 8px)',
         }"
