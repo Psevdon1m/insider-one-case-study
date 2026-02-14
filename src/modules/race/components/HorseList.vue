@@ -49,7 +49,7 @@ const horseConditionColorClass = (gap: number) => {
     >
       Horse List (1–20)
     </div>
-    <ScrollArea class="flex-1">
+    <div class="flex-1">
       <table class="w-full text-xs">
         <thead>
           <tr class="border-b text-muted-foreground">
@@ -89,7 +89,7 @@ const horseConditionColorClass = (gap: number) => {
           </tr>
         </tbody>
       </table>
-    </ScrollArea>
+    </div>
   </div>
 </template>
 

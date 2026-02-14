@@ -3,6 +3,7 @@ import { ref, computed, watch } from "vue";
 import BaseHeader from "@/core/components/ui/BaseHeader.vue";
 import BaseButton from "@/core/components/ui/BaseButton.vue";
 import HorseList from "../components/HorseList.vue";
+import CountDown from "@/core/components/ui/CountDown.vue";
 
 import { freshHorses } from "../domain/horses";
 
@@ -13,6 +14,7 @@ import ResultsList from "../components/ResultsList.vue";
 import { ROUND_TO_DISTANCE } from "../domain/constatns";
 
 const round = ref<keyof typeof ROUND_TO_DISTANCE>(1);
+  const areRacesCompleted = computed(() => Object.values(resultsPerRound.value).every((r) => r.length > 0));
 
 const currentDistance = computed<number>(() => {
   return ROUND_TO_DISTANCE[round.value];
@@ -58,6 +60,10 @@ const generateProgram = () => {
 };
 const startRace = async () => {
   if (raceHorses.value.length === 0) return;
+  if(round.value === 1 && resultsPerRound.value[1].length > 0){
+    resetState()
+  }
+
 
   if (raceStatus.value === "running") {
     // Pause
@@ -74,13 +80,15 @@ const startRace = async () => {
 
     if (done) {
       stopInterval();
+     
 
       round.value = ((round.value % 6) + 1) as keyof typeof ROUND_TO_DISTANCE; //allows rounds to inc only till 6, then reset to 1
       results.value = [];
-      setTimeout(() => {
+
         prepareForNextRound();
         raceStatus.value = "idle";
-      }, 3000);
+        distance.value = 0;
+
     }
   }, TICK_MS);
 };
@@ -89,12 +97,14 @@ const tick = () => {
   let allFinished = true;
   const currentResults = [...results.value];
 
+  //mb update min prgress in a var and calc distance from it?
+
   const updated = raceHorses.value.map((h) => {
     if (h.finished) return h;
 
     // Speed based on condition + randomness
     const baseSpeed = 0.3 + (h.condition / 100) * 0.5;
-    const randomFactor = 0.7 + Math.random() * 0.6;
+    const randomFactor = 0.7 + Math.random() * 1.6;
     const speed = baseSpeed * randomFactor;
 
     const newProgress = Math.min(h.progress + speed, 100);
@@ -121,7 +131,7 @@ const tick = () => {
 
   if (raceStatus.value === "running") {
     distance.value = Math.min(
-      distance.value + Math.round(currentDistance.value / 200),
+      distance.value + Math.round(currentDistance.value / 100),
       currentDistance.value,
     );
   }
@@ -166,21 +176,36 @@ const stopInterval = () => {
   }
 };
 
-const canStart = computed(() => raceHorses.value.length > 0);
-const canGenerate = computed(() => raceHorses.value.length === 0);
+const handleCountdownFinished = () => {
 
-watch(
-  raceHorses,
-  (newVal) => {
-    if (Array.isArray(newVal)) {
-      console.log("progress of 1 horse: ", newVal[0]?.progress);
-    }
-  },
-  { deep: true },
+  startRace();
+
+}
+
+const resetState = () => {
+  results.value = [];
+  distance.value = 0;
+  resultsPerRound.value = {
+    1: [],
+    2: [],
+    3: [],
+    4: [],
+    5: [],
+    6: [],
+  };
+}
+
+const canStart = computed(
+  () => raceHorses.value.length > 0 && raceStatus.value !== "finished" && round.value ===1,
 );
+const canGenerate = computed(() => raceHorses.value.length === 0 || areRacesCompleted.value);
+
+watch(raceStatus, (newVal) => console.log({ newVal }));
 </script>
 
 <template>
+
+  <CountDown v-if="raceStatus === 'idle' && round>1 &&round <=6" @completed="handleCountdownFinished" />
   <div class="flex flex-col h-screen bg-background overflow-hidden">
     <!-- Header -->
     <BaseHeader>
