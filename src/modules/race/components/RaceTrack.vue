@@ -94,7 +94,7 @@ watch(
     <div
       class="px-3 py-1.5 text-xs text-muted-foreground border-t bg-muted/20 text-center"
     >
-      <p v-if="raceStatus === 'idle'">Generate a program to start</p>
+      <p v-if="raceStatus === 'idle'">Ready to race</p>
   <div
     v-else-if="raceStatus === 'running'"
     class="flex justify-center items-center text-xs"

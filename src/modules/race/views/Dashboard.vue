@@ -113,13 +113,25 @@ const tick = () => {
   let leaderMaxProgress = -1;
   let leaderPreviousProgress = -1;
 
-  const updated = raceHorses.value.map((h) => {
+    // Speed calculation constants
+    const REFERENCE_DISTANCE = 1400; // 1200m is the baseline distance
+    const BASE_SPEED_COMPONENT = 0.3;
+    const CONDITION_WEIGHT = 0.5;
+    const MIN_RANDOM_FACTOR = 0.7;
+    const RANDOM_VARIANCE = 0.5;
+
+    // Adjust speed inversely proportional to distance (longer distance = slower progress per tick)
+    const distanceModifier = REFERENCE_DISTANCE / currentDistance.value;
+
+    const updated = raceHorses.value.map((h) => {
     if (h.finished) return h;
 
     // Speed based on condition + randomness
-    const baseSpeed = 0.3 + (h.condition / 100) * 0.5;
-    const randomFactor = 0.7 + Math.random() * 0.5;
-    const speed = baseSpeed * randomFactor;
+    const baseSpeed = BASE_SPEED_COMPONENT + (h.condition / 100) * CONDITION_WEIGHT;
+    const randomFactor = MIN_RANDOM_FACTOR + Math.random() * RANDOM_VARIANCE;
+    
+    // Final speed scaled by distance
+    const speed = (baseSpeed * randomFactor) * distanceModifier;
 
     const newProgress = Math.min(h.progress + speed, 100);
    
@@ -153,7 +165,8 @@ const tick = () => {
   }
 
   if (raceStatus.value === "running") {
-    distance.value =  Math.round(((minProgress) / 100) * currentDistance.value) 
+    let newDistance = Math.round(((minProgress) / 100) * currentDistance.value) + 50
+    distance.value = newDistance > currentDistance.value ? currentDistance.value : newDistance
 
     if (leaderHorse && leaderMaxProgress < 99) {
       const leaderSpeedPercent = leaderMaxProgress - leaderPreviousProgress;
