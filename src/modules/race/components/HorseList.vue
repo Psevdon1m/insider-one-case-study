@@ -64,7 +64,8 @@ const horseConditionColorClass = (gap: number) => {
             v-for="(h, i) in horses"
             :key="h.id"
             :class="{
-              'bg-green-300': raceHorses.findIndex((r) => r.id === h.id) >= 0,
+              'border-2 border-emerald-600 rounded-2xl':
+                raceHorses.findIndex((r) => r.id === h.id) >= 0,
             }"
           >
             <td class="px-2 py-1">{{ h.id }}</td>
