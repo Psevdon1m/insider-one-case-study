@@ -248,6 +248,13 @@ const canStart = computed(
     raceStatus.value !== "finished" &&
     round.value === 1,
 );
+
+const canResume = computed(
+  () =>
+    raceHorses.value.length > 0 &&
+    (raceStatus.value === "paused" || raceStatus.value === "running"),
+);
+
 const canGenerate = computed(
   () => raceHorses.value.length === 0 || areRacesCompleted.value,
 );
@@ -271,13 +278,16 @@ const canGenerate = computed(
         >
           Generate Program
         </BaseButton>
-        <BaseButton size="sm" @click="startRace" :disabled="!canStart">
+        <BaseButton v-if="raceStatus === 'idle'" size="sm" @click="startRace" :disabled="!canStart">
+          {{
+            `Start Round: #${round}`
+          }}
+        </BaseButton>
+        <BaseButton v-else="raceStatus === 'running' || raceStatus === 'paused'" size="sm" @click="startRace" :disabled="!canResume">
           {{
             raceStatus === "running"
-              ? "Pause"
-              : raceStatus === "paused"
-                ? "Resume"
-                : `Start Round: #${round}`
+              ? "Pause" : 
+                "Resume"
           }}
         </BaseButton>
       </div>
