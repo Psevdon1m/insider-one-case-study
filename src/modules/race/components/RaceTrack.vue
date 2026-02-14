@@ -7,6 +7,7 @@ interface RaceTrackProps {
   raceHorses: RaceHorse[];
   raceStatus: "idle" | "running" | "paused" | "finished";
   distance: number;
+  raceLeader: { name: string; speed: number } | null;
 }
 
 const props = defineProps<RaceTrackProps>();
@@ -94,11 +95,22 @@ watch(
       class="px-3 py-1.5 text-xs text-muted-foreground border-t bg-muted/20 text-center"
     >
       <p v-if="raceStatus === 'idle'">Generate a program to start</p>
-      <p v-else-if="raceStatus === 'running'">Racing — {{ distance }}m</p>
-      <p v-else-if="raceStatus === 'paused'">Paused — {{ distance }}m</p>
-      <p v-else-if="raceStatus === 'finished'">
-        RaceComplete — {{ distance }}m
-      </p>
+  <div
+    v-else-if="raceStatus === 'running'"
+    class="flex justify-center items-center text-xs"
+  >
+    <div class="w-32 text-right tabular-nums">Racing — {{ distance }}m</div>
+    <div class="w-64 text-left tabular-nums text-primary truncate pl-2 border-l border-primary/20 ml-2">
+      <span v-if="raceLeader">
+        Cur. fastest horse: {{ raceLeader.name }} ({{ raceLeader.speed }}km/h)
+      </span>
+      <span v-else class="opacity-50 text-xs">Loading...</span>
+    </div>
+  </div>
+  <p v-else-if="raceStatus === 'paused'">Paused — {{ distance }}m</p>
+  <p v-else-if="raceStatus === 'finished'">
+    RaceComplete — {{ distance }}m
+  </p>
     </div>
   </div>
 </template>

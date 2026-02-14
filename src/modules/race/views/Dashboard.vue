@@ -13,6 +13,8 @@ import ResultsList from "../components/ResultsList.vue";
 
 import { ROUND_TO_DISTANCE } from "../domain/constatns";
 
+import { useThrottleFn } from "@vueuse/core";
+
 const round = ref<keyof typeof ROUND_TO_DISTANCE>(1);
 const areRacesCompleted = computed(() =>
   Object.values(resultsPerRound.value).every((r) => r.length > 0),
@@ -30,6 +32,7 @@ const raceHorses = ref<RaceHorse[]>([]);
 const results = ref<{ position: number; name: string; color: string }[]>([]);
 const raceStatus = ref<"idle" | "running" | "paused" | "finished">("idle");
 const distance = ref(0);
+const raceLeader = ref<{ name: string; speed: number } | null>(null);
 
 const resultsPerRound = ref<Record<typeof round.value, typeof results.value>>({
   1: [],
@@ -41,6 +44,13 @@ const resultsPerRound = ref<Record<typeof round.value, typeof results.value>>({
 });
 
 const horses = ref(freshHorses);
+
+const updateLeader = useThrottleFn((leaderHorse: RaceHorse, speedKMH: number) => {
+  raceLeader.value = {
+    name: leaderHorse.name,
+    speed: Math.round(speedKMH),
+  };
+}, 500);
 
 const generateProgram = () => {
   if (intervalRef.value) clearInterval(intervalRef.value);
@@ -85,11 +95,12 @@ const startRace = async () => {
       round.value = ((round.value % 6) + 1) as keyof typeof ROUND_TO_DISTANCE; //allows rounds to inc only till 6, then reset to 1
       results.value = [];
       setTimeout(() => {
+
         //delay reset and let user see that all horses are finished
         prepareForNextRound();
         raceStatus.value = "idle";
         distance.value = 0;
-      }, 500);
+      }, 2000);
     }
   }, TICK_MS);
 };
@@ -98,6 +109,9 @@ const tick = () => {
   let allFinished = true;
   const currentResults = [...results.value];
   let minProgress = 100;
+  let leaderHorse: RaceHorse | null = null;
+  let leaderMaxProgress = -1;
+  let leaderPreviousProgress = -1;
 
   const updated = raceHorses.value.map((h) => {
     if (h.finished) return h;
@@ -108,9 +122,16 @@ const tick = () => {
     const speed = baseSpeed * randomFactor;
 
     const newProgress = Math.min(h.progress + speed, 100);
+   
     const finished = newProgress >= 100;
 
     minProgress = Math.min(minProgress, newProgress);
+
+    if (newProgress > leaderMaxProgress ) {
+      leaderMaxProgress = newProgress;
+      leaderHorse = h;
+      leaderPreviousProgress = h.progress;
+    }
 
     if (finished && !h.finished) {
       currentResults.push({
@@ -132,7 +153,18 @@ const tick = () => {
   }
 
   if (raceStatus.value === "running") {
-    distance.value = Math.round((minProgress / 100) * currentDistance.value);
+    distance.value =  Math.round(((minProgress) / 100) * currentDistance.value) 
+
+    if (leaderHorse && leaderMaxProgress < 99) {
+      const leaderSpeedPercent = leaderMaxProgress - leaderPreviousProgress;
+      // speed in m/s = (percent_increment / 100 * total_distance_m) / (TICK_MS / 1000)
+      // speed in km/h = speed_m_s * 3.6
+      const speedMS =
+        ((leaderSpeedPercent / 100) * currentDistance.value) / (TICK_MS / 1000);
+      const speedKMH = (speedMS * 3.6) / 100;
+
+      updateLeader(leaderHorse, speedKMH);
+    }
   }
 
   if (allFinished) {
@@ -141,6 +173,10 @@ const tick = () => {
   }
   return false;
 };
+
+
+
+
 
 const prepareForNextRound = () => {
   //todo fix duplicates
@@ -182,6 +218,7 @@ const handleCountdownFinished = () => {
 const resetState = () => {
   results.value = [];
   distance.value = 0;
+  raceLeader.value = null;
   resultsPerRound.value = {
     1: [],
     2: [],
@@ -202,7 +239,6 @@ const canGenerate = computed(
   () => raceHorses.value.length === 0 || areRacesCompleted.value,
 );
 
-watch(raceStatus, (newVal) => console.log({ newVal }));
 </script>
 
 <template>
@@ -244,7 +280,7 @@ watch(raceStatus, (newVal) => console.log({ newVal }));
 
       <!-- Center — Race Track -->
       <div class="w-4xl">
-        <RaceTrack :raceHorses :raceStatus :distance />
+        <RaceTrack :raceHorses :raceStatus :distance :raceLeader />
       </div>
 
       <!-- Right — Program & Results  -->

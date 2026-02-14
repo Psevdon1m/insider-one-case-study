@@ -12,7 +12,7 @@ const domainRoutes = import.meta.glob("@/modules/*/routes/index.ts", {
   import: "default",
 });
 
-console.log({ domainRoutes });
+
 
 // this will merge all the routes from the modules into the main routes array
 Object.values(domainRoutes).forEach((module: unknown) => {
