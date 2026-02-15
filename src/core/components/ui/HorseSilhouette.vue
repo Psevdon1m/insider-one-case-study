@@ -70,6 +70,7 @@ const hslColor = computed(() => {
       class="horse-ghost"
       draggable="false"
       aria-hidden="true"
+      fetchpriority="high"
     />
 
     <!-- mask overlay that applies the color -->
