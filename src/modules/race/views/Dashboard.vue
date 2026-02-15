@@ -45,12 +45,15 @@ const resultsPerRound = ref<Record<typeof round.value, typeof results.value>>({
 
 const horses = ref(freshHorses);
 
-const updateLeader = useThrottleFn((leaderHorse: RaceHorse, speedKMH: number) => {
-  raceLeader.value = {
-    name: leaderHorse.name,
-    speed: Math.round(speedKMH),
-  };
-}, 500);
+const updateLeader = useThrottleFn(
+  (leaderHorse: RaceHorse, speedKMH: number) => {
+    raceLeader.value = {
+      name: leaderHorse.name,
+      speed: Math.round(speedKMH),
+    };
+  },
+  500,
+);
 
 const generateProgram = () => {
   if (intervalRef.value) clearInterval(intervalRef.value);
@@ -96,7 +99,6 @@ const startRace = async () => {
       round.value = ((round.value % 6) + 1) as keyof typeof ROUND_TO_DISTANCE; //allows rounds to inc only till 6, then reset to 1
       results.value = [];
       setTimeout(() => {
-
         //delay reset and let user see that all horses are finished
         prepareForNextRound();
         raceStatus.value = "idle";
@@ -115,33 +117,34 @@ const tick = () => {
   let leaderMaxProgress = -1;
   let leaderPreviousProgress = -1;
 
-    // Speed calculation constants
-    const REFERENCE_DISTANCE = 1600; // 1600m is the baseline distance
-    const BASE_SPEED_COMPONENT = 0.3;
-    const CONDITION_WEIGHT = 0.5;
-    const MIN_RANDOM_FACTOR = 0.7;
-    const RANDOM_VARIANCE = 0.5;
+  // Speed calculation constants
+  const REFERENCE_DISTANCE = 1600; // 1600m is the baseline distance
+  const BASE_SPEED_COMPONENT = 0.3;
+  const CONDITION_WEIGHT = 0.5;
+  const MIN_RANDOM_FACTOR = 0.7;
+  const RANDOM_VARIANCE = 0.5;
 
-    // Adjust speed inversely proportional to distance (longer distance = slower progress per tick)
-    const distanceModifier = REFERENCE_DISTANCE / currentDistance.value;
+  // Adjust speed inversely proportional to distance (longer distance = slower progress per tick)
+  const distanceModifier = REFERENCE_DISTANCE / currentDistance.value;
 
-    const updated = raceHorses.value.map((h) => {
+  const updated = raceHorses.value.map((h) => {
     if (h.finished) return h;
 
     // Speed based on condition + randomness
-    const baseSpeed = BASE_SPEED_COMPONENT + (h.condition / 100) * CONDITION_WEIGHT;
+    const baseSpeed =
+      BASE_SPEED_COMPONENT + (h.condition / 100) * CONDITION_WEIGHT;
     const randomFactor = MIN_RANDOM_FACTOR + Math.random() * RANDOM_VARIANCE;
-    
+
     // Final speed scaled by distance
-    const speed = (baseSpeed * randomFactor) * distanceModifier;
+    const speed = baseSpeed * randomFactor * distanceModifier;
 
     const newProgress = Math.min(h.progress + speed, 100);
-   
+
     const finished = newProgress >= 100;
 
     minProgress = Math.min(minProgress, newProgress);
 
-    if (newProgress > leaderMaxProgress ) {
+    if (newProgress > leaderMaxProgress) {
       leaderMaxProgress = newProgress;
       leaderHorse = h;
       leaderPreviousProgress = h.progress;
@@ -167,8 +170,10 @@ const tick = () => {
   }
 
   if (raceStatus.value === "running") {
-    let newDistance = Math.round(((minProgress) / 100) * currentDistance.value) + 75
-    distance.value = newDistance > currentDistance.value ? currentDistance.value : newDistance
+    let newDistance =
+      Math.round((minProgress / 100) * currentDistance.value) + 75;
+    distance.value =
+      newDistance > currentDistance.value ? currentDistance.value : newDistance;
 
     if (leaderHorse && leaderMaxProgress < 99) {
       const leaderSpeedPercent = leaderMaxProgress - leaderPreviousProgress;
@@ -188,10 +193,6 @@ const tick = () => {
   }
   return false;
 };
-
-
-
-
 
 const prepareForNextRound = () => {
   //todo fix duplicates
@@ -261,7 +262,6 @@ const canResume = computed(
 const canGenerate = computed(
   () => raceHorses.value.length === 0 || areRacesCompleted.value,
 );
-
 </script>
 
 <template>
@@ -281,36 +281,46 @@ const canGenerate = computed(
         >
           Generate Program
         </BaseButton>
-        <BaseButton v-if="raceStatus === 'idle'" size="sm" @click="startRace" :disabled="!canStart">
-          {{
-            `Start Round: #${round}`
-          }}
+        <BaseButton
+          v-if="raceStatus === 'idle'"
+          size="sm"
+          @click="startRace"
+          :disabled="!canStart"
+        >
+          {{ `Start` }}
         </BaseButton>
-        <BaseButton v-else="raceStatus === 'running' || raceStatus === 'paused'" size="sm" @click="startRace" :disabled="!canResume">
-          {{
-            raceStatus === "running"
-              ? "Pause" : 
-                "Resume"
-          }}
+        <BaseButton
+          v-else="raceStatus === 'running' || raceStatus === 'paused'"
+          size="sm"
+          @click="startRace"
+          :disabled="!canResume"
+        >
+          {{ raceStatus === "running" ? "Pause" : "Resume" }}
         </BaseButton>
       </div>
     </BaseHeader>
     <!-- /Header -->
 
     <!-- Main content -->
-    <div class="flex flex-1 flex-col 2xl:flex-row gap-2 p-2 overflow-y-auto 2xl:overflow-hidden min-h-0">
+    <div
+      class="flex flex-1 flex-col 2xl:flex-row gap-2 p-2 overflow-y-auto 2xl:overflow-hidden min-h-0"
+    >
       <!-- Left — Horse List -->
       <div class="w-full 2xl:w-xs shrink-0 order-2 2xl:order-1">
         <HorseList :horses :raceHorses />
       </div>
 
       <!-- Center — Race Track -->
-      <div class="w-full 2xl:w-4xl overflow-auto order-1 2xl:order-2 min-h-[500px]">
+      <div
+        class="w-full 2xl:w-4xl overflow-auto order-1 2xl:order-2 min-h-[500px]"
+      >
         <RaceTrack :raceHorses :raceStatus :distance :raceLeader />
       </div>
 
       <!-- Right — Program & Results  -->
-      <div class="w-full 2xl:w-xl min-h-[400px] 2xl:h-full overflow-auto order-3 2xl:order-3">
+      <div
+        class="w-full 2xl:w-xl min-h-100 2xl:h-full overflow-auto order-3 2xl:order-3"
+      >
         <ResultsList :program="raceHorses" :results="resultsPerRound" />
       </div>
     </div>
