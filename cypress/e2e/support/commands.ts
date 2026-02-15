@@ -61,7 +61,7 @@ Cypress.Commands.add("waitForRoundCompletion", (round) => {
   // - 4000ms countdown before the round starts (except for round 1)
   // - round * 1000ms + 8000 ms for the race itself
   const countdownTime = round > 1 ? 4000 : 0;
-  const raceTime = round * 1000 + 8000;
+  const raceTime = round * 1000 + 9000;
   const totalWaitTime = countdownTime + raceTime;
 
   cy.wait(totalWaitTime);
