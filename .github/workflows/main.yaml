@@ -74,7 +74,7 @@ jobs:
                   wait-on-timeout: 120
                   browser: chrome
 
-                  spec: /
+                  spec: |
                       cypress/e2e/**
                   config-file: cypress.config.ts
                   install-command: npm ci --force
@@ -84,7 +84,7 @@ jobs:
               uses: actions/upload-artifact@v4
               with:
                   name: cypress-results-chrome-desktop
-                  path: /
+                  path: |
                       cypress/videos/
                       cypress/screenshots/
 
@@ -123,7 +123,7 @@ jobs:
                   wait-on-timeout: 120
                   browser: firefox
 
-                  spec: /
+                  spec: |
                       cypress/e2e/**
                   config-file: cypress.config.ts
                   install-command: npm ci --force
@@ -133,7 +133,7 @@ jobs:
               uses: actions/upload-artifact@v4
               with:
                   name: cypress-results-firefox-desktop
-                  path: /
+                  path: |
                       cypress/videos/
                       cypress/screenshots/
 
