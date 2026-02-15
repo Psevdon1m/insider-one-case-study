@@ -4,6 +4,29 @@ describe("Race Simulation E2E", () => {
     cy.visitRaceDashboard();
   });
 
+  it("all 6 rounds should complete automatically with results", () => {
+    // this is needed to proprerly reset page after previous test
+
+    cy.visitRaceDashboard();
+
+    //generate program
+    cy.generateProgram();
+
+    //start a racce
+    cy.startRace();
+
+    // Wait for and verify each round sequentially via Cypress command chain (no async/await)
+    const waitAndVerifyRound = (round: number) => {
+      if (round > 6) return;
+      cy.waitForRoundCompletion(round);
+      cy.get(`[data-testid="round-${round}-results"]`).should("be.visible");
+      cy.get(`[data-testid="round-${round}-results"]`)
+        .find(`[data-testid="results-${round}-horse-item"]`)
+        .should("have.length", 10)
+        .then(() => waitAndVerifyRound(round + 1));
+    };
+    waitAndVerifyRound(1);
+  });
   it("should load the race dashboard successfully", () => {
     // Verify the page loads
     cy.get('[data-testid="race-dashboard"]').should("exist");
@@ -98,34 +121,6 @@ describe("Race Simulation E2E", () => {
       expect(el.length).to.equal(10),
     );
     cy.visitRaceDashboard();
-  });
-
-  it("all 6 rounds should complete automatically with results", async () => {
-    // this is needed to proprerly reset page after previous test
-    cy.wait(1000);
-    cy.visitRaceDashboard();
-
-    //generate program
-    cy.generateProgram();
-
-
-
-    //start a racce
-    cy.startRace();
-
-    // Wait for and verify each round sequentially
-    for (let round = 1; round <= 6; round++) {
-      // Wait for this round to complete
-      await cy.waitForRoundCompletion(round);
-
-      // Verify results for this round are displayed
-      cy.get(`[data-testid="round-${round}-results"]`).should("be.visible");
-
-      // Verify all 10 horses have results for this round
-      cy.get(`[data-testid="round-${round}-results"]`)
-        .find(`[data-testid="results-${round}-horse-item"]`)
-        .should("have.length", 10);
-    }
   });
 
   it("should allow starting a new race after completion", () => {
