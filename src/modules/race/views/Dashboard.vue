@@ -9,11 +9,11 @@ import { freshHorses } from "../domain/horses";
 
 import type { RaceHorse } from "../domain/types";
 import RaceTrack from "../components/RaceTrack.vue";
-import ResultsList from "../components/ResultsList.vue";
 
 import { ROUND_TO_DISTANCE } from "../domain/constatns";
 
 import { useThrottleFn } from "@vueuse/core";
+import ResultsAndProgramWrapper from "../components/ResultsAndProgramWrapper.vue";
 
 const round = ref<keyof typeof ROUND_TO_DISTANCE>(1);
 const areRacesCompleted = computed(() =>
@@ -227,10 +227,6 @@ const stopInterval = () => {
   }
 };
 
-const handleCountdownFinished = () => {
-  startRace();
-};
-
 const resetState = () => {
   results.value = [];
 
@@ -246,12 +242,7 @@ const resetState = () => {
   };
 };
 
-const canStart = computed(
-  () =>
-    raceHorses.value.length > 0 &&
-    raceStatus.value !== "finished" &&
-    round.value === 1,
-);
+const canStart = computed(() => raceHorses.value.length > 0);
 
 const canResume = computed(
   () =>
@@ -260,15 +251,11 @@ const canResume = computed(
 );
 
 const canGenerate = computed(
-  () => raceHorses.value.length === 0 || areRacesCompleted.value,
+  () => raceStatus.value !== "paused" && raceStatus.value !== "running",
 );
 </script>
 
 <template>
-  <CountDown
-    v-if="raceStatus === 'idle' && round > 1 && round <= 6"
-    @completed="handleCountdownFinished"
-  />
   <div class="flex flex-col h-screen bg-background overflow-hidden">
     <!-- Header -->
     <BaseHeader>
@@ -289,7 +276,7 @@ const canGenerate = computed(
           :disabled="!canStart"
           data-testid="start-race"
         >
-          {{ `Start` }}
+          Start Round: #{{ round }}
         </BaseButton>
         <BaseButton
           v-else="raceStatus === 'running' || raceStatus === 'paused'"
@@ -323,7 +310,10 @@ const canGenerate = computed(
       <div
         class="w-full 2xl:w-xl min-h-100 2xl:h-full overflow-auto order-3 2xl:order-3"
       >
-        <ResultsList :program="raceHorses" :results="resultsPerRound" />
+        <ResultsAndProgramWrapper
+          :program="raceHorses"
+          :results="resultsPerRound"
+        />
       </div>
     </div>
     <!-- /MainContent -->

@@ -1,23 +1,26 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+/**
+ * Count down was created in case we want all 5 rounds (from 2-6 round) start automatically. But since we have functionality that allows user to re-select horser for each round, it is not used now.
+ */
+import { ref, onMounted } from "vue";
 
-const count = ref<number | 'GO!'> (4);
-const emit = defineEmits(['completed']);
+const count = ref<number | "GO!">(4);
+const emit = defineEmits(["completed"]);
 const interval = ref<number>();
 
 function countDown() {
-  if (typeof count.value === 'number') {
-      if (count.value > 1) {
-        count.value--;
-      } else {
-        count.value = 'GO!';
-      }
+  if (typeof count.value === "number") {
+    if (count.value > 1) {
+      count.value--;
     } else {
-      clearInterval(interval.value);
-      setTimeout(() => {
-        emit('completed');
-      }, 1000);
+      count.value = "GO!";
     }
+  } else {
+    clearInterval(interval.value);
+    setTimeout(() => {
+      emit("completed");
+    }, 1000);
+  }
 }
 
 onMounted(() => {
@@ -26,16 +29,14 @@ onMounted(() => {
     countDown();
   }, 800);
 });
-
 </script>
 
 <template>
-  <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+  <div
+    class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+  >
     <Transition name="fade" mode="out-in" appear>
-      <div 
-        :key="count" 
-        class="text-6xl font-black text-black drop-shadow-lg"
-      >
+      <div :key="count" class="text-6xl font-black text-black drop-shadow-lg">
         {{ count }}
       </div>
     </Transition>
@@ -45,7 +46,9 @@ onMounted(() => {
 <style scoped>
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 0.5s ease, transform 0.5s ease;
+  transition:
+    opacity 0.5s ease,
+    transform 0.5s ease;
 }
 
 .fade-enter-from {
