@@ -76,9 +76,9 @@ jobs:
 
                   spec: |
                       cypress/e2e/**
-                  config-file: cypress.config.js
+                  config-file: cypress.config.ts
                   install-command: npm ci --force
-              continue-on-error: true
+              continue-on-error: false
 
             - name: Upload Cypress Artifacts
               uses: actions/upload-artifact@v4
@@ -126,9 +126,9 @@ jobs:
                   spec: |
                       cypress/e2e/**
 
-                  config-file: cypress.config.js
+                  config-file: cypress.config.ts
                   install-command: npm ci --force
-              continue-on-error: true
+              continue-on-error: false
 
             - name: Upload Cypress Artifacts
               uses: actions/upload-artifact@v4
