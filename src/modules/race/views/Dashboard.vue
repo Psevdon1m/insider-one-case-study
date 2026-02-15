@@ -116,7 +116,7 @@ const startRace = async () => {
           results.value = [];
           raceStatus.value = "idle";
           distance.value = 0;
-        }, 60000);
+        }, 2000);
       });
     }
   }, TICK_MS);
@@ -336,6 +336,7 @@ const getHorsesPerCurrentRound = computed(
           :horses
           :raceHorses="[...getHorsesPerCurrentRound]"
           :update-condition="shouldUpdateCondition"
+          @condition-updated="shouldUpdateCondition = false"
         />
       </div>
 

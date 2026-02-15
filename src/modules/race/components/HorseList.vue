@@ -12,25 +12,34 @@ const props = defineProps<HorseListProps>();
 const emit = defineEmits(["condition-updated"]);
 
 //id:difference
-const res = ref<Record<number, number>>({});
+const horsesConditions = ref<Record<number, number>>({});
+
+watch(
+  () => props.raceHorses,
+  (newVal) => {
+    if (newVal.length === 0) {
+      //on raceHorse reset, removes arrow down condition and red class
+      horsesConditions.value = {};
+      emit("condition-updated");
+    }
+  },
+);
 
 watch(
   () => props.updateCondition,
   (newVal) => {
     if (newVal) {
+      //when receive updateCondition, calcs the difference and store id:difference in object for further render.
       props.raceHorses.forEach((rh) => {
         const freshHorse = props.horses.find((h) => h.id === rh.id);
         if (freshHorse) {
           if (rh.condition !== freshHorse.condition) {
-            res.value[rh.id] = freshHorse.condition - rh.condition;
+            horsesConditions.value[rh.id] = freshHorse.condition - rh.condition;
           }
         }
       });
-      setTimeout(() => {
-        res.value = {};
-      }, 3000);
     }
-  }
+  },
 );
 </script>
 
@@ -74,7 +83,7 @@ watch(
             </td>
             <td
               class="px-2 py-1 w-25 text-center"
-              :class="{ 'text-red-600': res[h.id] }"
+              :class="{ 'text-red-600': horsesConditions[h.id] }"
               data-testid="horse-condition"
             >
               <span
@@ -82,7 +91,9 @@ watch(
               >
                 <span class="min-w-0 truncate">{{ h.condition }}</span>
                 <span class="shrink-0 w-5 text-right">
-                  <span v-if="res[h.id]" class="text-red-800">&#8595;</span>
+                  <span v-if="horsesConditions[h.id]" class="text-red-800"
+                    >&#8595;</span
+                  >
                 </span>
               </span>
             </td>
