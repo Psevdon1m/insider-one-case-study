@@ -81,9 +81,6 @@ const generateProgram = () => {
 };
 const startRace = async () => {
   if (getHorsesPerCurrentRound.value.length === 0) return;
-  if (round.value === 1 && resultsPerRound.value[1].length === 10) {
-    resetState();
-  }
 
   if (raceStatus.value === "running") {
     // Pause
@@ -104,16 +101,14 @@ const startRace = async () => {
 
       nextTick().then(() => {
         updateAllHorsesCondition();
+        results.value = [];
+        distance.value = 0;
 
         setTimeout(() => {
           //delay reset and let user see that all horses are finished
-
-          round.value = ((round.value % 6) +
-            1) as keyof typeof ROUND_TO_DISTANCE; //allows rounds to inc only till 6, then reset to 1
-          results.value = [];
+          round.value = getNextRound() as keyof typeof ROUND_TO_DISTANCE; //allows rounds to inc only till 6, then reset to 1
           raceStatus.value = "idle";
-          distance.value = 0;
-        }, 2000);
+        }, 1000);
       });
     }
   }, TICK_MS);
@@ -269,7 +264,11 @@ const resetState = () => {
   };
 };
 
-const canStart = computed(() => getHorsesPerCurrentRound.value.length > 0);
+const canStart = computed(
+  () =>
+    getHorsesPerCurrentRound.value.length > 0 &&
+    resultsPerRound.value[round.value].length === 0,
+);
 
 const canResume = computed(
   () =>
@@ -278,12 +277,17 @@ const canResume = computed(
 );
 
 const canGenerate = computed(
-  () => raceStatus.value !== "paused" && raceStatus.value !== "running",
+  () => raceStatus.value === "idle" && !canRestart.value,
+);
+const canRestart = computed(() =>
+  Object.values(resultsPerRound.value).every((arr) => arr.length === 10),
 );
 
 const getHorsesPerCurrentRound = computed(
   (): RaceHorse[] => raceHorsesPerRound.value[round.value],
 );
+
+const getNextRound = () => (round.value % 6) + 1;
 </script>
 
 <template>
@@ -294,30 +298,52 @@ const getHorsesPerCurrentRound = computed(
         <BaseButton
           size="sm"
           variant="outline"
+          @click="resetState"
+          :disabled="!canRestart"
+          data-testid="generate-program"
+        >
+          Restart Race
+        </BaseButton>
+        <BaseButton
+          size="sm"
+          variant="outline"
           @click="generateProgram"
           :disabled="!canGenerate"
           data-testid="generate-program"
         >
           Generate Program
         </BaseButton>
-        <BaseButton
-          v-if="raceStatus === 'idle'"
-          size="sm"
-          @click="startRace"
-          :disabled="!canStart"
-          data-testid="start-race"
-        >
-          Start Round: #{{ round }}
-        </BaseButton>
-        <BaseButton
-          v-else="raceStatus === 'running' || raceStatus === 'paused'"
-          size="sm"
-          @click="startRace"
-          :disabled="!canResume"
-          data-testid="pause-resume-race"
-        >
-          {{ raceStatus === "running" ? "Pause" : "Resume" }}
-        </BaseButton>
+        <div class="min-w-[140px]">
+          <BaseButton
+            v-if="raceStatus === 'idle'"
+            size="sm"
+            @click="startRace"
+            :disabled="!canStart"
+            data-testid="start-race"
+            class="w-full"
+          >
+            Start Round: #{{ round }}
+          </BaseButton>
+          <BaseButton
+            v-else-if="raceStatus === 'finished'"
+            size="sm"
+            :disabled="true"
+            data-testid="pause-resume-race"
+            class="w-full"
+          >
+            Start Round: #{{ getNextRound() }}
+          </BaseButton>
+          <BaseButton
+            v-else="raceStatus === 'running' || raceStatus === 'paused'"
+            size="sm"
+            @click="startRace"
+            :disabled="!canResume"
+            data-testid="pause-resume-race"
+            class="w-full"
+          >
+            {{ raceStatus === "running" ? "Pause" : "Resume" }}
+          </BaseButton>
+        </div>
       </div>
     </BaseHeader>
     <!-- /Header -->
