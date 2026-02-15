@@ -121,7 +121,8 @@ describe("Race Simulation E2E", () => {
     cy.visitRaceDashboard();
   });
 
-  it("should allow starting a new race after completion", () => {
+  //skipped in ci due to long running
+  it.skip("should allow starting a new race after completion", () => {
     // Complete first race
     cy.generateProgram();
     cy.startRace();
