@@ -4,7 +4,7 @@ import { ROUND_TO_DISTANCE } from "../domain/constatns";
 import type { RaceHorse, RaceResult } from "../domain/types";
 import { useHorseStore } from "../store/horseStore";
 
-export function useRacing() {
+export function useRace() {
   const TICK_MS = 50;
   const intervalRef = ref<null | number>(null);
   const round = ref<keyof typeof ROUND_TO_DISTANCE>(1);
@@ -16,7 +16,7 @@ export function useRacing() {
   const horseStore = useHorseStore();
 
   const getHorsesPerCurrentRound = computed(
-    (): RaceHorse[] => horseStore.raceHorsesPerRound[round.value]
+    (): RaceHorse[] => horseStore.raceHorsesPerRound[round.value],
   );
 
   const currentDistance = computed<number>(() => {
@@ -212,7 +212,7 @@ export function useRacing() {
         speed: Math.round(speedKMH),
       };
     },
-    500
+    500,
   );
 
   const getNextRound = () => (round.value % 6) + 1;
@@ -234,6 +234,12 @@ export function useRacing() {
   return {
     round,
     getHorsesPerCurrentRound,
+    currentDistance,
+    raceLeader,
+    raceStatus,
+    results,
+    distance,
+    shouldUpdateCondition,
     generateProgram,
     startRace,
     tick,
@@ -241,12 +247,6 @@ export function useRacing() {
     updateAllHorsesCondition,
     stopInterval,
     resetState,
-    currentDistance,
-    raceLeader,
     getNextRound,
-    raceStatus,
-    results,
-    distance,
-    shouldUpdateCondition,
   };
 }

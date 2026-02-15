@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { computed } from "vue";
 
 import BaseHeader from "@/core/components/ui/BaseHeader.vue";
 import BaseButton from "@/core/components/ui/BaseButton.vue";
@@ -8,45 +8,40 @@ import ResultsAndProgramWrapper from "../components/ResultsAndProgramWrapper.vue
 import RaceTrack from "../components/RaceTrack.vue";
 
 import { useHorseStore } from "../store/horseStore";
-import { useRacing } from "../composables/useRacing";
+import { useRace } from "../composables/useRace";
 
 const {
   round,
   getHorsesPerCurrentRound,
-  generateProgram,
-  startRace,
-  tick,
-  prepareForNextRound,
-  updateAllHorsesCondition,
-  stopInterval,
-  resetState,
-  currentDistance,
   raceStatus,
   raceLeader,
   distance,
-  getNextRound,
   shouldUpdateCondition,
-} = useRacing();
+  generateProgram,
+  startRace,
+  resetState,
+  getNextRound,
+} = useRace();
 
 const horseStore = useHorseStore();
 
 const canStart = computed(
   () =>
     getHorsesPerCurrentRound.value.length > 0 &&
-    horseStore.resultsPerRound[round.value].length === 0
+    horseStore.resultsPerRound[round.value].length === 0,
 );
 
 const canResume = computed(
   () =>
     getHorsesPerCurrentRound.value.length > 0 &&
-    (raceStatus.value === "paused" || raceStatus.value === "running")
+    (raceStatus.value === "paused" || raceStatus.value === "running"),
 );
 
 const canGenerate = computed(
-  () => raceStatus.value === "idle" && !canRestart.value
+  () => raceStatus.value === "idle" && !canRestart.value,
 );
 const canRestart = computed(() =>
-  Object.values(horseStore.resultsPerRound).every((arr) => arr.length === 10)
+  Object.values(horseStore.resultsPerRound).every((arr) => arr.length === 10),
 );
 </script>
 
