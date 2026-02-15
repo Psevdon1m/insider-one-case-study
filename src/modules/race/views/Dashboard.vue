@@ -15,9 +15,6 @@ import { useThrottleFn } from "@vueuse/core";
 import ResultsAndProgramWrapper from "../components/ResultsAndProgramWrapper.vue";
 
 const round = ref<keyof typeof ROUND_TO_DISTANCE>(1);
-const areRacesCompleted = computed(() =>
-  Object.values(resultsPerRound.value).every((r) => r.length > 0),
-);
 
 const currentDistance = computed<number>(() => {
   return ROUND_TO_DISTANCE[round.value];

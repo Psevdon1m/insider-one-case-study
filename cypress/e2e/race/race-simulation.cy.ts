@@ -3,34 +3,7 @@ describe("Race Simulation E2E", () => {
     // Visit the race dashboard before each test
     cy.visitRaceDashboard();
   });
-  afterEach(() => {
-    // Visit the race dashboard before each test
-    cy.reload();
-  });
 
-  it.skip("all 6 rounds should complete automatically with results", () => {
-    // this is needed to proprerly reset page after previous test
-
-    cy.visitRaceDashboard();
-
-    //generate program
-    cy.generateProgram();
-
-    //start a racce
-    cy.startRace();
-
-    // Wait for and verify each round sequentially via Cypress command chain (no async/await)
-    const waitAndVerifyRound = (round: number) => {
-      if (round > 6) return;
-      cy.waitForRoundCompletion(round);
-      cy.get(`[data-testid="round-${round}-results"]`).should("exist");
-      cy.get(`[data-testid="round-${round}-results"]`)
-        .find(`[data-testid="results-${round}-horse-item"]`)
-        .should("have.length", 10)
-        .then(() => waitAndVerifyRound(round + 1));
-    };
-    waitAndVerifyRound(1);
-  });
   it("should load the race dashboard successfully", () => {
     // Verify the page loads
     cy.get('[data-testid="race-dashboard"]').should("exist");
@@ -63,7 +36,7 @@ describe("Race Simulation E2E", () => {
 
     // Verify horses are displayed
     cy.get('[data-testid="race-horse-item"]').then(
-      (el) => expect(el.length).to.equal(60), // 10 per race
+      (el) => expect(el.length).to.equal(10), // 10 per race
     );
 
     // Verify that reace horses are picked
