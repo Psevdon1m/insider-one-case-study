@@ -75,6 +75,8 @@ describe("Race Simulation E2E", () => {
           .invoke("css", "left")
           .should("not.equal", initialLeft);
       });
+
+    cy.visitRaceDashboard();
   });
 
   it("results table should be populated after 1 round", async () => {
@@ -95,11 +97,20 @@ describe("Race Simulation E2E", () => {
     cy.get(`[data-testid="results-1-horse-item"]`).then((el) =>
       expect(el.length).to.equal(10),
     );
+    cy.visitRaceDashboard();
   });
 
   it("all 6 rounds should complete automatically with results", async () => {
-    // Start the race program
+    // this is needed to proprerly reset page after previous test
+    cy.wait(1000);
+    cy.visitRaceDashboard();
+
+    //generate program
     cy.generateProgram();
+
+
+
+    //start a racce
     cy.startRace();
 
     // Wait for and verify each round sequentially
