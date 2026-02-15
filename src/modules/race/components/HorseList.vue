@@ -45,7 +45,7 @@ watch(
       Horse List (1–20)
     </div>
     <div class="flex-1">
-      <table class="w-full text-xs">
+      <table class="w-full text-xs border-separate [border-spacing:0_6px]">
         <thead>
           <tr class="border-b text-muted-foreground">
             <th class="text-left px-2 py-1.5 font-medium">#</th>
@@ -58,8 +58,9 @@ watch(
           <tr
             v-for="h in horses"
             :key="h.id"
+            class="border-2 border-transparent rounded-2xl"
             :class="{
-              'border-2 border-emerald-600 rounded-2xl':
+              'ring-2 ring-inset ring-emerald-600':
                 raceHorses.findIndex((r) => r.id === h.id) >= 0,
             }"
             data-testid="horse-item"
@@ -76,9 +77,11 @@ watch(
               :class="{ 'text-red-600': res[h.id] }"
               data-testid="horse-condition"
             >
-              <span class="condition-cell">
-                <span class="condition-cell__value">{{ h.condition }}</span>
-                <span class="condition-cell__arrow">
+              <span
+                class="flex items-center justify-center gap-1 w-full min-w-0 mx-auto"
+              >
+                <span class="min-w-0 truncate">{{ h.condition }}</span>
+                <span class="shrink-0 w-5 text-right">
                   <span v-if="res[h.id]" class="text-red-800">&#8595;</span>
                 </span>
               </span>
@@ -95,25 +98,3 @@ watch(
     </div>
   </div>
 </template>
-
-<style scoped>
-.condition-cell {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.25rem;
-  width: 100%;
-  min-width: 0;
-  margin: 0 auto;
-}
-.condition-cell__value {
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.condition-cell__arrow {
-  flex-shrink: 0;
-  width: 1.25rem;
-  text-align: right;
-}
-</style>
