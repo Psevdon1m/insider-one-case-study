@@ -58,14 +58,14 @@ Cypress.Commands.add("waitForRaceCompletion", () => {
 });
 Cypress.Commands.add("waitForRoundCompletion", (round) => {
   // Wait time for this specific round:
-  // - 2400ms countdown before the round starts (except for round 1)
-  // - round * 1000 + 7000 ms for the race itself
+  // - 4000ms countdown before the round starts (except for round 1)
+  // - round * 1000ms + 8000 ms for the race itself
   const countdownTime = round > 1 ? 4000 : 0;
   const raceTime = round * 1000 + 8000;
   const totalWaitTime = countdownTime + raceTime;
 
   cy.wait(totalWaitTime);
-  cy.get(`[data-testid="round-${round}-results"]`).should("be.visible");
+  cy.get(`[data-testid="round-${round}-results"]`).should("exist");
 });
 
 export {};

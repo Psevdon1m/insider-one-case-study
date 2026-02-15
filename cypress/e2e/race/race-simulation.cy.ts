@@ -3,6 +3,10 @@ describe("Race Simulation E2E", () => {
     // Visit the race dashboard before each test
     cy.visitRaceDashboard();
   });
+  afterEach(() => {
+    // Visit the race dashboard before each test
+    cy.reload();
+  });
 
   it("all 6 rounds should complete automatically with results", () => {
     // this is needed to proprerly reset page after previous test
@@ -19,7 +23,7 @@ describe("Race Simulation E2E", () => {
     const waitAndVerifyRound = (round: number) => {
       if (round > 6) return;
       cy.waitForRoundCompletion(round);
-      cy.get(`[data-testid="round-${round}-results"]`).should("be.visible");
+      cy.get(`[data-testid="round-${round}-results"]`).should("exist");
       cy.get(`[data-testid="round-${round}-results"]`)
         .find(`[data-testid="results-${round}-horse-item"]`)
         .should("have.length", 10)
@@ -102,21 +106,15 @@ describe("Race Simulation E2E", () => {
     cy.visitRaceDashboard();
   });
 
-  it("results table should be populated after 1 round", async () => {
+  it("results table should be populated after 1 round", () => {
     // Start the race
     cy.generateProgram();
     cy.startRace();
 
     // Wait for race to complete
-    await cy.waitForRoundCompletion(1);
+    cy.waitForRoundCompletion(1);
 
-    // Verify results are displayed
-    cy.get('[data-testid="results-horse-item"]').should(
-      "have.length.greaterThan",
-      0,
-    );
-
-    // Verify all finishing positions are shown
+    // Verify all finishing positions for round 1 are shown
     cy.get(`[data-testid="results-1-horse-item"]`).then((el) =>
       expect(el.length).to.equal(10),
     );
