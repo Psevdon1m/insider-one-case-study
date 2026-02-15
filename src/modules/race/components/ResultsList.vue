@@ -34,11 +34,12 @@ defineProps<ProgramResultsProps>();
           Click "Generate Program"
         </p>
 
-        <div v-else className="text-xs">
+        <div v-else className="text-xs" data-testid="race-horse-list">
           <div
             v-for="h in program"
             :key="h.id"
             className="flex items-center gap-2 px-3 py-1.5 border-b last:border-0"
+            data-testid="race-horse-item"
           >
             <span className="font-mono text-muted-foreground w-5">{{
               h.lane
@@ -47,7 +48,11 @@ defineProps<ProgramResultsProps>();
               className="w-2.5 h-2.5 rounded-full shrink-0"
               :style="{ background: `hsl(${h.color})` }"
             />
-            <span className="truncate font-medium">{{ h.name }}</span>
+            <span
+              className="truncate font-medium"
+              data-testid="race-horse-name"
+              >{{ h.name }}</span
+            >
           </div>
         </div>
       </div>
@@ -56,6 +61,7 @@ defineProps<ProgramResultsProps>();
     <!-- Results  -->
     <div
       className="w-full border rounded-lg bg-card shadow-sm overflow-scroll flex flex-col"
+      :data-testid="`round-${i}-results`"
     >
       <div
         className="px-3 py-2 text-sm font-semibold text-white"
@@ -71,11 +77,12 @@ defineProps<ProgramResultsProps>();
           Waiting for race…
         </p>
 
-        <div v-else className="text-xs">
+        <div v-else className="text-xs" :data-testid="`results-${i}-list`">
           <div
             v-for="r in race"
             :key="r.position"
             className="flex items-center gap-2 px-3 py-1.5 border-b last:border-0"
+            :data-testid="`results-${i}-horse-item`"
           >
             <span className="font-mono font-bold w-5">
               {{

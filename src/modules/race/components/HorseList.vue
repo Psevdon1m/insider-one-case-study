@@ -59,7 +59,7 @@ const horseConditionColorClass = (gap: number) => {
             <th class="text-center px-2 py-1.5 font-medium">Color</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody data-testid="horse-list">
           <tr
             v-for="(h, i) in horses"
             :key="h.id"
@@ -67,9 +67,13 @@ const horseConditionColorClass = (gap: number) => {
               'border-2 border-emerald-600 rounded-2xl':
                 raceHorses.findIndex((r) => r.id === h.id) >= 0,
             }"
+            data-testid="horse-item"
           >
             <td class="px-2 py-1">{{ h.id }}</td>
-            <td class="px-2 py-1 font-medium truncate max-w-25">
+            <td
+              class="px-2 py-1 font-medium truncate max-w-25"
+              data-testid="horse-name"
+            >
               {{ h.name }}
             </td>
             <td
@@ -77,6 +81,7 @@ const horseConditionColorClass = (gap: number) => {
               :class="
                 horseConditionColorClass(h.condition - getLatestCondition(h))
               "
+              data-testid="horse-condition"
             >
               {{ getLatestCondition(h) }}
             </td>

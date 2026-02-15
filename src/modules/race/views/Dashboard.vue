@@ -278,6 +278,7 @@ const canGenerate = computed(
           variant="outline"
           @click="generateProgram"
           :disabled="!canGenerate"
+          data-testid="generate-program"
         >
           Generate Program
         </BaseButton>
@@ -286,6 +287,7 @@ const canGenerate = computed(
           size="sm"
           @click="startRace"
           :disabled="!canStart"
+          data-testid="start-race"
         >
           {{ `Start` }}
         </BaseButton>
@@ -294,6 +296,7 @@ const canGenerate = computed(
           size="sm"
           @click="startRace"
           :disabled="!canResume"
+          data-testid="pause-resume-race"
         >
           {{ raceStatus === "running" ? "Pause" : "Resume" }}
         </BaseButton>
@@ -304,6 +307,7 @@ const canGenerate = computed(
     <!-- Main content -->
     <div
       class="flex flex-1 flex-col 2xl:flex-row gap-2 p-2 overflow-y-auto 2xl:overflow-hidden min-h-0"
+      data-testid="race-dashboard"
     >
       <!-- Left — Horse List -->
       <div class="w-full 2xl:w-xs shrink-0 order-2 2xl:order-1">
@@ -311,9 +315,7 @@ const canGenerate = computed(
       </div>
 
       <!-- Center — Race Track -->
-      <div
-        class="w-full 2xl:w-4xl overflow-auto order-1 2xl:order-2 min-h-[500px]"
-      >
+      <div class="w-full 2xl:w-4xl overflow-auto order-1 2xl:order-2 min-h-125">
         <RaceTrack :raceHorses :raceStatus :distance :raceLeader />
       </div>
 

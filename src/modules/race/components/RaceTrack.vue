@@ -26,7 +26,8 @@ watch(
 </script>
 <template>
   <div
-    class="flex flex-col h-full border rounded-lg bg-card shadow-sm overflow-hidden min-w-[800px] min-h-[500px]"
+    class="flex flex-col h-full border rounded-lg bg-card shadow-sm overflow-hidden min-w-200 min-h-125"
+    data-testid="race-track"
   >
     <div class="px-3 py-2 text-sm font-semibold border-b bg-muted/30">
       Race Track
@@ -75,6 +76,7 @@ watch(
                 transitionDuration: raceStatus === 'running' ? '200ms' : '0ms',
                 transitionTimingFunction: 'linear',
               }"
+              data-testid="horse-wrapper"
             >
               <HorseSilhouette
                 :color="horseByLane[lane]!.color"
@@ -83,6 +85,7 @@ watch(
                   horseByLane[lane].progress < 100 && raceStatus === 'running'
                 "
                 :size="50"
+                data-testid="horse-silhouette"
               />
             </div>
           </div>
@@ -95,22 +98,26 @@ watch(
       class="px-3 py-1.5 text-xs text-muted-foreground border-t bg-muted/20 text-center"
     >
       <p v-if="raceStatus === 'idle'">Ready to race</p>
-  <div
-    v-else-if="raceStatus === 'running'"
-    class="flex justify-center items-center text-xs"
-  >
-    <div class="w-32 text-right tabular-nums">Racing — {{ distance }}m</div>
-    <div class="w-64 text-left tabular-nums text-primary truncate pl-2 border-l border-primary/20 ml-2">
-      <span v-if="raceLeader">
-        Cur. fastest horse: {{ raceLeader.name }} ({{ raceLeader.speed }}km/h)
-      </span>
-      <span v-else class="opacity-50 text-xs">Loading...</span>
-    </div>
-  </div>
-  <p v-else-if="raceStatus === 'paused'">Paused — {{ distance }}m</p>
-  <p v-else-if="raceStatus === 'finished'">
-    RaceComplete — {{ distance }}m
-  </p>
+      <div
+        v-else-if="raceStatus === 'running'"
+        class="flex justify-center items-center text-xs"
+      >
+        <div class="w-32 text-right tabular-nums">Racing — {{ distance }}m</div>
+        <div
+          class="w-64 text-left tabular-nums text-primary truncate pl-2 border-l border-primary/20 ml-2"
+        >
+          <span v-if="raceLeader">
+            Cur. fastest horse: {{ raceLeader.name }} ({{
+              raceLeader.speed
+            }}km/h)
+          </span>
+          <span v-else class="opacity-50 text-xs">Loading...</span>
+        </div>
+      </div>
+      <p v-else-if="raceStatus === 'paused'">Paused — {{ distance }}m</p>
+      <p v-else-if="raceStatus === 'finished'">
+        RaceComplete — {{ distance }}m
+      </p>
     </div>
   </div>
 </template>
