@@ -1,42 +1,37 @@
 <script setup lang="ts">
-import {  computed } from "vue";
+import { ref, watch } from "vue";
 import type { Horse, RaceHorse } from "../domain/types";
 interface HorseListProps {
   horses: Horse[];
   raceHorses: RaceHorse[];
+  updateCondition: boolean;
 }
 
 const props = defineProps<HorseListProps>();
 
-const horsesConditions = computed(() => {
-  let res: Record<number, number> = {};
-  props.raceHorses.forEach((h) => {
-    const id = h.id;
-    res[id] = h.condition;
-  });
-  return res;
-});
+const emit = defineEmits(["condition-updated"]);
 
-const getLatestCondition = (h: Horse) => {
-  return Math.min(h.condition, horsesConditions.value[h.id] || h.condition);
-};
+//id:difference
+const res = ref<Record<number, number>>({});
 
-//todo think on how to make it optimal check, currently 2 times function getLatestCondition is called
-const horseConditionColorClass = (gap: number) => {
-  if (gap === 0) {
-    return `text-black`;
-  } else if (gap < 10) {
-    return `text-red-400`;
-  } else if (gap < 20) {
-    return `text-red-500`;
-  } else if (gap < 30) {
-    return `text-red-600`;
-  } else if (gap < 40) {
-    return `text-red-700`;
-  } else {
-    return `text-red-800`;
+watch(
+  () => props.updateCondition,
+  (newVal) => {
+    if (newVal) {
+      props.raceHorses.forEach((rh) => {
+        const freshHorse = props.horses.find((h) => h.id === rh.id);
+        if (freshHorse) {
+          if (rh.condition !== freshHorse.condition) {
+            res.value[rh.id] = freshHorse.condition - rh.condition;
+          }
+        }
+      });
+      setTimeout(() => {
+        res.value = {};
+      }, 3000);
+    }
   }
-};
+);
 </script>
 
 <template>
@@ -55,13 +50,13 @@ const horseConditionColorClass = (gap: number) => {
           <tr class="border-b text-muted-foreground">
             <th class="text-left px-2 py-1.5 font-medium">#</th>
             <th class="text-left px-2 py-1.5 font-medium">Name</th>
-            <th class="text-center px-2 py-1.5 font-medium">Cond</th>
+            <th class="text-center px-2 pr-7 py-1.5 font-medium">Cond</th>
             <th class="text-center px-2 py-1.5 font-medium">Color</th>
           </tr>
         </thead>
         <tbody data-testid="horse-list">
           <tr
-            v-for="(h) in horses"
+            v-for="h in horses"
             :key="h.id"
             :class="{
               'border-2 border-emerald-600 rounded-2xl':
@@ -77,13 +72,16 @@ const horseConditionColorClass = (gap: number) => {
               {{ h.name }}
             </td>
             <td
-              class="text-center px-2 py-1"
-              :class="
-                horseConditionColorClass(h.condition - getLatestCondition(h))
-              "
+              class="px-2 py-1 w-25 text-center"
+              :class="{ 'text-red-600': res[h.id] }"
               data-testid="horse-condition"
             >
-              {{ getLatestCondition(h) }}
+              <span class="condition-cell">
+                <span class="condition-cell__value">{{ h.condition }}</span>
+                <span class="condition-cell__arrow">
+                  <span v-if="res[h.id]" class="text-red-800">&#8595;</span>
+                </span>
+              </span>
             </td>
             <td class="text-center px-2 py-1">
               <span
@@ -98,4 +96,24 @@ const horseConditionColorClass = (gap: number) => {
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.condition-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  width: 100%;
+  min-width: 0;
+  margin: 0 auto;
+}
+.condition-cell__value {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.condition-cell__arrow {
+  flex-shrink: 0;
+  width: 1.25rem;
+  text-align: right;
+}
+</style>

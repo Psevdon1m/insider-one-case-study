@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, nextTick } from "vue";
 import BaseHeader from "@/core/components/ui/BaseHeader.vue";
 import BaseButton from "@/core/components/ui/BaseButton.vue";
 import HorseList from "../components/HorseList.vue";
@@ -27,12 +27,11 @@ const TICK_MS = 50;
 
 const intervalRef = ref<null | number>(null);
 
-const raceHorses = ref<RaceHorse[]>([]);
 const results = ref<{ position: number; name: string; color: string }[]>([]);
 const raceStatus = ref<"idle" | "running" | "paused" | "finished">("idle");
 const distance = ref(0);
 const raceLeader = ref<{ name: string; speed: number } | null>(null);
-
+const shouldUpdateCondition = ref(false);
 const resultsPerRound = ref<Record<typeof round.value, typeof results.value>>({
   1: [],
   2: [],
@@ -104,16 +103,21 @@ const startRace = async () => {
 
     if (done) {
       stopInterval();
+      prepareForNextRound();
 
-      round.value = ((round.value % 6) + 1) as keyof typeof ROUND_TO_DISTANCE; //allows rounds to inc only till 6, then reset to 1
-      results.value = [];
-      setTimeout(() => {
-        //delay reset and let user see that all horses are finished
-        prepareForNextRound();
-        raceStatus.value = "idle";
+      nextTick().then(() => {
+        updateAllHorsesCondition();
 
-        distance.value = 0;
-      }, 2000);
+        setTimeout(() => {
+          //delay reset and let user see that all horses are finished
+
+          round.value = ((round.value % 6) +
+            1) as keyof typeof ROUND_TO_DISTANCE; //allows rounds to inc only till 6, then reset to 1
+          results.value = [];
+          raceStatus.value = "idle";
+          distance.value = 0;
+        }, 60000);
+      });
     }
   }, TICK_MS);
 };
@@ -204,7 +208,6 @@ const tick = () => {
 };
 
 const prepareForNextRound = () => {
-  //todo fix duplicates
   const currentResults = [...results.value];
 
   const updated = getHorsesPerCurrentRound.value.map((h) => {
@@ -227,6 +230,16 @@ const prepareForNextRound = () => {
   });
 
   raceHorsesPerRound.value[round.value] = [...updated];
+  shouldUpdateCondition.value = true;
+};
+
+const updateAllHorsesCondition = () => {
+  raceHorsesPerRound.value[round.value].forEach((rh) => {
+    let index = horses.value.findIndex((h) => h.id === rh.id);
+    if (horses.value[index] && horses.value[index].condition !== rh.condition) {
+      horses.value[index].condition = rh.condition;
+    }
+  });
 };
 
 const stopInterval = () => {
@@ -319,7 +332,11 @@ const getHorsesPerCurrentRound = computed(
     >
       <!-- Left — Horse List -->
       <div class="w-full 2xl:w-xs shrink-0 order-2 2xl:order-1">
-        <HorseList :horses :raceHorses="getHorsesPerCurrentRound" />
+        <HorseList
+          :horses
+          :raceHorses="[...getHorsesPerCurrentRound]"
+          :update-condition="shouldUpdateCondition"
+        />
       </div>
 
       <!-- Center — Race Track -->
