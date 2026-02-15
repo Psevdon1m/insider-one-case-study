@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { ROUND_TO_DISTANCE } from "../domain/constatns";
+import type { RoundType } from "../domain/types";
 interface Props {
   results: Record<
-    keyof typeof ROUND_TO_DISTANCE,
+    RoundType,
     { position: number; name: string; color: string }[]
   >;
 }

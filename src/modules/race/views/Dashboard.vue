@@ -3,7 +3,6 @@ import { ref, computed } from "vue";
 import BaseHeader from "@/core/components/ui/BaseHeader.vue";
 import BaseButton from "@/core/components/ui/BaseButton.vue";
 import HorseList from "../components/HorseList.vue";
-import CountDown from "@/core/components/ui/CountDown.vue";
 
 import { freshHorses } from "../domain/horses";
 
@@ -45,6 +44,15 @@ const resultsPerRound = ref<Record<typeof round.value, typeof results.value>>({
 
 const horses = ref(freshHorses);
 
+const raceHorsesPerRound = ref<Record<typeof round.value, RaceHorse[]>>({
+  1: [],
+  2: [],
+  3: [],
+  4: [],
+  5: [],
+  6: [],
+});
+
 const updateLeader = useThrottleFn(
   (leaderHorse: RaceHorse, speedKMH: number) => {
     raceLeader.value = {
@@ -60,14 +68,15 @@ const generateProgram = () => {
   const shuffled = [...horses.value]
     .sort(() => Math.random() - 0.5)
     .slice(0, 10);
-  const programmed: RaceHorse[] = shuffled.map((h, i) => ({
+
+  const horsesForNextRound: RaceHorse[] = shuffled.map((h, i) => ({
     ...h,
     lane: i + 1,
     progress: 0,
     finished: false,
   }));
 
-  raceHorses.value = programmed;
+  raceHorsesPerRound.value[round.value] = horsesForNextRound;
   results.value = [];
 
   raceStatus.value = "idle";
@@ -75,7 +84,7 @@ const generateProgram = () => {
   distance.value = 0;
 };
 const startRace = async () => {
-  if (raceHorses.value.length === 0) return;
+  if (getHorsesPerCurrentRound.value.length === 0) return;
   if (round.value === 1 && resultsPerRound.value[1].length === 10) {
     resetState();
   }
@@ -127,7 +136,7 @@ const tick = () => {
   // Adjust speed inversely proportional to distance (longer distance = slower progress per tick)
   const distanceModifier = REFERENCE_DISTANCE / currentDistance.value;
 
-  const updated = raceHorses.value.map((h) => {
+  const updated = getHorsesPerCurrentRound.value.map((h) => {
     if (h.finished) return h;
 
     // Speed based on condition + randomness
@@ -163,7 +172,7 @@ const tick = () => {
     return { ...h, progress: newProgress, finished };
   });
 
-  raceHorses.value = [...updated];
+  raceHorsesPerRound.value[round.value] = [...updated];
   results.value = [...currentResults];
   if (resultsPerRound.value) {
     resultsPerRound.value[round.value] = [...results.value];
@@ -198,7 +207,7 @@ const prepareForNextRound = () => {
   //todo fix duplicates
   const currentResults = [...results.value];
 
-  const updated = raceHorses.value.map((h) => {
+  const updated = getHorsesPerCurrentRound.value.map((h) => {
     if (h.finished) {
       currentResults.push({
         position: currentResults.length + 1,
@@ -217,7 +226,7 @@ const prepareForNextRound = () => {
     };
   });
 
-  raceHorses.value = [...updated];
+  raceHorsesPerRound.value[round.value] = [...updated];
 };
 
 const stopInterval = () => {
@@ -232,6 +241,14 @@ const resetState = () => {
 
   distance.value = 0;
   raceLeader.value = null;
+  raceHorsesPerRound.value = {
+    1: [],
+    2: [],
+    3: [],
+    4: [],
+    5: [],
+    6: [],
+  };
   resultsPerRound.value = {
     1: [],
     2: [],
@@ -242,16 +259,20 @@ const resetState = () => {
   };
 };
 
-const canStart = computed(() => raceHorses.value.length > 0);
+const canStart = computed(() => getHorsesPerCurrentRound.value.length > 0);
 
 const canResume = computed(
   () =>
-    raceHorses.value.length > 0 &&
+    getHorsesPerCurrentRound.value.length > 0 &&
     (raceStatus.value === "paused" || raceStatus.value === "running"),
 );
 
 const canGenerate = computed(
   () => raceStatus.value !== "paused" && raceStatus.value !== "running",
+);
+
+const getHorsesPerCurrentRound = computed(
+  (): RaceHorse[] => raceHorsesPerRound.value[round.value],
 );
 </script>
 
@@ -298,12 +319,17 @@ const canGenerate = computed(
     >
       <!-- Left — Horse List -->
       <div class="w-full 2xl:w-xs shrink-0 order-2 2xl:order-1">
-        <HorseList :horses :raceHorses />
+        <HorseList :horses :raceHorses="getHorsesPerCurrentRound" />
       </div>
 
       <!-- Center — Race Track -->
       <div class="w-full 2xl:w-4xl overflow-auto order-1 2xl:order-2 min-h-125">
-        <RaceTrack :raceHorses :raceStatus :distance :raceLeader />
+        <RaceTrack
+          :raceHorses="getHorsesPerCurrentRound"
+          :raceStatus
+          :distance
+          :raceLeader
+        />
       </div>
 
       <!-- Right — Program & Results  -->
@@ -311,7 +337,7 @@ const canGenerate = computed(
         class="w-full 2xl:w-xl min-h-100 2xl:h-full overflow-auto order-3 2xl:order-3"
       >
         <ResultsAndProgramWrapper
-          :program="raceHorses"
+          :program="raceHorsesPerRound"
           :results="resultsPerRound"
         />
       </div>

@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { RaceHorse } from "../domain/types";
+import type { RaceHorse, RoundType } from "../domain/types";
 
 interface Props {
-  rounds: number;
-  program: RaceHorse[];
+  rounds: RoundType;
+  program: Record<RoundType, RaceHorse[]>;
 }
 
 defineProps<Props>();
@@ -23,7 +23,7 @@ defineProps<Props>();
       </div>
       <div className="flex-1">
         <p
-          v-if="program.length === 0"
+          v-if="program[round as RoundType].length === 0"
           className="text-xs text-muted-foreground p-3"
         >
           Click "Generate Program"
@@ -31,7 +31,7 @@ defineProps<Props>();
 
         <div v-else className="text-xs" data-testid="race-horse-list">
           <div
-            v-for="h in program"
+            v-for="h in program[round as RoundType]"
             :key="h.id"
             className="flex items-center gap-2 px-3 py-1.5 border-b last:border-0"
             data-testid="race-horse-item"

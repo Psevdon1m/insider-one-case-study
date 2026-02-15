@@ -6,12 +6,12 @@
 </template>
 
 <script setup lang="ts">
-import type { RaceHorse } from "../domain/types";
+import type { RaceHorse, RoundType } from "../domain/types";
 
 import { ROUND_TO_DISTANCE } from "../domain/constatns";
 
 interface ProgramResultsProps {
-  program: RaceHorse[];
+  program: Record<RoundType, RaceHorse[]>;
   results: Record<
     keyof typeof ROUND_TO_DISTANCE,
     { position: number; name: string; color: string }[]
@@ -20,7 +20,7 @@ interface ProgramResultsProps {
 
 const props = defineProps<ProgramResultsProps>();
 
-const roundCount = Object.keys(ROUND_TO_DISTANCE).length;
+const roundCount = Object.keys(ROUND_TO_DISTANCE).length as RoundType;
 
 import ProgramList from "./ProgramList.vue";
 import ResultsList from "./ResultsList.vue";
