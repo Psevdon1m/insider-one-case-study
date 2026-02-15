@@ -22,7 +22,7 @@ watch(
       horsesConditions.value = {};
       emit("condition-updated");
     }
-  },
+  }
 );
 
 watch(
@@ -39,7 +39,7 @@ watch(
         }
       });
     }
-  },
+  }
 );
 </script>
 
@@ -56,11 +56,11 @@ watch(
     <div class="flex-1">
       <table class="w-full text-xs border-separate [border-spacing:0_6px]">
         <thead>
-          <tr class="border-b text-muted-foreground">
-            <th class="text-left px-2 py-1.5 font-medium">#</th>
-            <th class="text-left px-2 py-1.5 font-medium">Name</th>
-            <th class="text-center px-2 pr-7 py-1.5 font-medium">Cond</th>
-            <th class="text-center px-2 py-1.5 font-medium">Color</th>
+          <tr class="text-muted-foreground">
+            <th class="text-left px-2 py-1.5 font-medium border-b border-gray-300">#</th>
+            <th class="text-left px-2 py-1.5 font-medium border-b border-gray-300">Name</th>
+            <th class="text-center px-2 pr-7 py-1.5 font-medium border-b border-gray-300">Cond</th>
+            <th class="text-center px-2 py-1.5 font-medium border-b border-gray-300">Color</th>
           </tr>
         </thead>
         <tbody data-testid="horse-list">
