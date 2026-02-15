@@ -68,11 +68,12 @@ const generateProgram = () => {
   results.value = [];
 
   raceStatus.value = "idle";
+
   distance.value = 0;
 };
 const startRace = async () => {
   if (raceHorses.value.length === 0) return;
-  if (round.value === 1 && resultsPerRound.value[1].length > 0) {
+  if (round.value === 1 && resultsPerRound.value[1].length === 10) {
     resetState();
   }
 
@@ -99,6 +100,7 @@ const startRace = async () => {
         //delay reset and let user see that all horses are finished
         prepareForNextRound();
         raceStatus.value = "idle";
+
         distance.value = 0;
       }, 2000);
     }
@@ -114,7 +116,7 @@ const tick = () => {
   let leaderPreviousProgress = -1;
 
     // Speed calculation constants
-    const REFERENCE_DISTANCE = 1400; // 1200m is the baseline distance
+    const REFERENCE_DISTANCE = 1600; // 1600m is the baseline distance
     const BASE_SPEED_COMPONENT = 0.3;
     const CONDITION_WEIGHT = 0.5;
     const MIN_RANDOM_FACTOR = 0.7;
@@ -165,7 +167,7 @@ const tick = () => {
   }
 
   if (raceStatus.value === "running") {
-    let newDistance = Math.round(((minProgress) / 100) * currentDistance.value) + 50
+    let newDistance = Math.round(((minProgress) / 100) * currentDistance.value) + 75
     distance.value = newDistance > currentDistance.value ? currentDistance.value : newDistance
 
     if (leaderHorse && leaderMaxProgress < 99) {
@@ -230,6 +232,7 @@ const handleCountdownFinished = () => {
 
 const resetState = () => {
   results.value = [];
+
   distance.value = 0;
   raceLeader.value = null;
   resultsPerRound.value = {
