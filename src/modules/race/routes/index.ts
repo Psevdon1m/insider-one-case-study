@@ -2,7 +2,7 @@ import { type RouteRecordRaw } from "vue-router";
 
 const routes: RouteRecordRaw[] = [
   {
-    path: "/",
+    path: import.meta.env.BASE_URL,
     name: "Dashboard",
     component: () => import("@/modules/race/views/Dashboard.vue"),
   },
