@@ -328,7 +328,6 @@ const getNextRound = () => (round.value % 6) + 1;
             v-else-if="raceStatus === 'finished'"
             size="sm"
             :disabled="true"
-            data-testid="pause-resume-race"
             class="w-full"
           >
             Start Round: #{{ getNextRound() }}

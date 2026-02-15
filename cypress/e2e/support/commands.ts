@@ -43,7 +43,7 @@ Cypress.Commands.add("visitRaceDashboard", () => {
 
 Cypress.Commands.add("startRace", () => {
   // Adjust selector based on your actual button
-  cy.contains("button", /start/i).click();
+  cy.get(`[data-testid="start-race"]`).click();
 });
 Cypress.Commands.add("generateProgram", () => {
   // Adjust selector based on your actual button
