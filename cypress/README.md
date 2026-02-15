@@ -5,7 +5,7 @@ This directory contains end-to-end (E2E) tests for the Insider One Case Study ra
 ## 📁 Directory Structure
 
 ```
-tests/
+cypress/
 └── e2e/
     ├── fixtures/          # Test data and mock objects
     │   └── horses.ts      # Sample horse data for testing
@@ -35,7 +35,7 @@ npm run cypress:open
 npm run cypress:run
 
 # Run specific test file
-npx cypress run --spec "tests/e2e/race/race-simulation.cy.ts"
+npx cypress run --spec "cypress/e2e/race/race-simulation.cy.ts"
 ```
 
 ## 🧪 Test Suites
@@ -149,9 +149,9 @@ Cypress configuration is defined in `cypress.config.ts` at the project root:
 | Setting | Value |
 |---------|-------|
 | **Base URL** | `http://localhost:5173` |
-| **Spec Pattern** | `tests/e2e/**/*.cy.{js,jsx,ts,tsx}` |
-| **Support File** | `tests/e2e/support/e2e.ts` |
-| **Fixtures Folder** | `tests/e2e/fixtures` |
+| **Spec Pattern** | `cypress/e2e/**/*.cy.{js,jsx,ts,tsx}` |
+| **Support File** | `cypress/e2e/support/e2e.ts` |
+| **Fixtures Folder** | `cypress/e2e/fixtures` |
 | **Viewport** | 1920×1080 |
 | **Video Recording** | Disabled |
 | **Screenshot on Failure** | Enabled |
@@ -190,7 +190,7 @@ The application uses `data-testid` attributes for reliable element selection:
 ## 🐛 Debugging
 
 ### Failed Tests
-- Screenshots are automatically saved to `tests/e2e/screenshots/`
+- Screenshots are automatically saved to `cypress/e2e/screenshots/`
 - Check console logs in Cypress Test Runner
 - Use `.debug()` command to pause test execution
 
