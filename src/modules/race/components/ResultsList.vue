@@ -1,13 +1,11 @@
 <script setup lang="ts">
-import type { RoundType } from "../domain/types";
-interface Props {
-  results: Record<
-    RoundType,
-    { position: number; name: string; color: string }[]
-  >;
-}
+import { computed } from "vue";
+import { useHorseStore } from "../store/horseStore";
+const horseStore = useHorseStore();
 
-defineProps<Props>();
+const results = computed(() => {
+  return horseStore.resultsPerRound;
+});
 </script>
 
 <template>
@@ -43,10 +41,10 @@ defineProps<Props>();
                 r.position === 1
                   ? "🥇"
                   : r.position === 2
-                    ? "🥈"
-                    : r.position === 3
-                      ? "🥉"
-                      : `${r.position}.`
+                  ? "🥈"
+                  : r.position === 3
+                  ? "🥉"
+                  : `${r.position}.`
               }}
             </span>
             <span

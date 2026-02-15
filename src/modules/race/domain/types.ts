@@ -1,4 +1,4 @@
-import { ROUND_TO_DISTANCE } from "./constatns";
+import { ROUND_TO_DISTANCE } from "./constants";
 
 export interface Horse {
   id: number;
@@ -14,3 +14,9 @@ export interface RaceHorse extends Horse {
 }
 
 export type RoundType = keyof typeof ROUND_TO_DISTANCE;
+
+export interface RaceResult {
+  position: number;
+  name: string;
+  color: string;
+}

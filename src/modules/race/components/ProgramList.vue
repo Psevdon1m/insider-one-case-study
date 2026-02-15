@@ -1,9 +1,15 @@
 <script setup lang="ts">
-import type { RaceHorse, RoundType } from "../domain/types";
+import type { RoundType } from "../domain/types";
+import { computed } from "vue";
+import { useHorseStore } from "../store/horseStore";
+const horseStore = useHorseStore();
+
+const program = computed(() => {
+  return horseStore.raceHorsesPerRound;
+});
 
 interface Props {
   rounds: RoundType;
-  program: Record<RoundType, RaceHorse[]>;
 }
 
 defineProps<Props>();

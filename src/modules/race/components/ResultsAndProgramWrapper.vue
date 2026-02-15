@@ -1,24 +1,13 @@
 <template>
   <div class="program-results-grid">
-    <ProgramList :program="program" :rounds="roundCount" />
-    <ResultsList :results="results" />
+    <ProgramList :rounds="roundCount" />
+    <ResultsList />
   </div>
 </template>
 
 <script setup lang="ts">
-import type { RaceHorse, RoundType } from "../domain/types";
-
-import { ROUND_TO_DISTANCE } from "../domain/constatns";
-
-interface ProgramResultsProps {
-  program: Record<RoundType, RaceHorse[]>;
-  results: Record<
-    keyof typeof ROUND_TO_DISTANCE,
-    { position: number; name: string; color: string }[]
-  >;
-}
-
-const props = defineProps<ProgramResultsProps>();
+import type { RoundType } from "../domain/types";
+import { ROUND_TO_DISTANCE } from "../domain/constants";
 
 const roundCount = Object.keys(ROUND_TO_DISTANCE).length as RoundType;
 
