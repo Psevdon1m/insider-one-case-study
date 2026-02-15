@@ -212,7 +212,7 @@ const prepareForNextRound = () => {
     return {
       ...h,
       progress: 0,
-      condition: h.condition - tireness,
+      condition: h.condition - tireness >= 0 ? h.condition - tireness : 0,
       finished: false,
     };
   });
