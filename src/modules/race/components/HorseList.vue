@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { watch, computed } from "vue";
+import {  computed } from "vue";
 import type { Horse, RaceHorse } from "../domain/types";
 interface HorseListProps {
   horses: Horse[];
@@ -61,7 +61,7 @@ const horseConditionColorClass = (gap: number) => {
         </thead>
         <tbody data-testid="horse-list">
           <tr
-            v-for="(h, i) in horses"
+            v-for="(h) in horses"
             :key="h.id"
             :class="{
               'border-2 border-emerald-600 rounded-2xl':
