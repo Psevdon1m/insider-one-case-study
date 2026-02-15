@@ -1,6 +1,6 @@
 import { ref, computed, nextTick } from "vue";
 import { useThrottleFn } from "@vueuse/core";
-import { ROUND_TO_DISTANCE } from "../domain/constatns";
+import { ROUND_TO_DISTANCE } from "../domain/constants";
 import type { RaceHorse, RaceResult } from "../domain/types";
 import { useHorseStore } from "../store/horseStore";
 

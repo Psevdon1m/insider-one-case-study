@@ -1,4 +1,4 @@
-import { ROUND_TO_DISTANCE } from "./constatns";
+import { ROUND_TO_DISTANCE } from "./constants";
 
 export interface Horse {
   id: number;

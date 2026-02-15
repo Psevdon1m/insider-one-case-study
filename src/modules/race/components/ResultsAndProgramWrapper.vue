@@ -7,7 +7,7 @@
 
 <script setup lang="ts">
 import type { RoundType } from "../domain/types";
-import { ROUND_TO_DISTANCE } from "../domain/constatns";
+import { ROUND_TO_DISTANCE } from "../domain/constants";
 
 const roundCount = Object.keys(ROUND_TO_DISTANCE).length as RoundType;
 
