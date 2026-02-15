@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ref, watch } from "vue";
 import type { Horse, RaceHorse } from "../domain/types";
 interface HorseListProps {
   horses: Horse[];
@@ -22,7 +21,7 @@ watch(
       horsesConditions.value = {};
       emit("condition-updated");
     }
-  }
+  },
 );
 
 watch(
@@ -39,7 +38,7 @@ watch(
         }
       });
     }
-  }
+  },
 );
 </script>
 
@@ -57,10 +56,26 @@ watch(
       <table class="w-full text-xs border-separate [border-spacing:0_6px]">
         <thead>
           <tr class="text-muted-foreground">
-            <th class="text-left px-2 py-1.5 font-medium border-b border-gray-300">#</th>
-            <th class="text-left px-2 py-1.5 font-medium border-b border-gray-300">Name</th>
-            <th class="text-center px-2 pr-7 py-1.5 font-medium border-b border-gray-300">Cond</th>
-            <th class="text-center px-2 py-1.5 font-medium border-b border-gray-300">Color</th>
+            <th
+              class="text-left px-2 py-1.5 font-medium border-b border-gray-300"
+            >
+              #
+            </th>
+            <th
+              class="text-left px-2 py-1.5 font-medium border-b border-gray-300"
+            >
+              Name
+            </th>
+            <th
+              class="text-center px-2 pr-7 py-1.5 font-medium border-b border-gray-300"
+            >
+              Cond
+            </th>
+            <th
+              class="text-center px-2 py-1.5 font-medium border-b border-gray-300"
+            >
+              Color
+            </th>
           </tr>
         </thead>
         <tbody data-testid="horse-list">

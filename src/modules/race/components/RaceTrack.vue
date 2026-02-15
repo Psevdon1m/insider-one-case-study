@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ref, watch } from "vue";
 import type { RaceHorse } from "../domain/types";
 import HorseSilhouette from "@/core/components/ui/HorseSilhouette.vue";
 

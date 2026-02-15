@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { computed } from "vue";
 import { useHorseStore } from "../store/horseStore";
 const horseStore = useHorseStore();
 
@@ -41,10 +40,10 @@ const results = computed(() => {
                 r.position === 1
                   ? "🥇"
                   : r.position === 2
-                  ? "🥈"
-                  : r.position === 3
-                  ? "🥉"
-                  : `${r.position}.`
+                    ? "🥈"
+                    : r.position === 3
+                      ? "🥉"
+                      : `${r.position}.`
               }}
             </span>
             <span

@@ -2,7 +2,6 @@
 /**
  * Count down was created in case we want all 5 rounds (from 2-6 round) start automatically. But since we have functionality that allows user to re-select horser for each round, it is not used now.
  */
-import { ref, onMounted } from "vue";
 
 const count = ref<number | "GO!">(4);
 const emit = defineEmits(["completed"]);
