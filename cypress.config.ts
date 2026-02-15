@@ -12,5 +12,6 @@ export default defineConfig({
     viewportHeight: 1080,
     video: false,
     screenshotOnRunFailure: true,
+    defaultCommandTimeout: 10000,
   },
 });

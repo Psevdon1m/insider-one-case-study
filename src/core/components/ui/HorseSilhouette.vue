@@ -7,7 +7,7 @@ const props = defineProps({
    */
   gifSrc: {
     type: String,
-    default: "/horse-no-bg-1.gif",
+    default: `${import.meta.env.BASE_URL}horse-no-bg-1.gif`,
   },
 
   /**
@@ -15,7 +15,7 @@ const props = defineProps({
    */
   standingSrc: {
     type: String,
-    default: "/horse-no-bg.png",
+    default: `${import.meta.env.BASE_URL}horse-no-bg.png`,
   },
 
   /**
@@ -49,11 +49,6 @@ const props = defineProps({
   },
 });
 
-/* choose which image to show */
-const imageSrc = computed(() =>
-  props.animate ? props.gifSrc : props.standingSrc,
-);
-
 /* normalize to hsl() */
 const hslColor = computed(() => {
   if (props.color.startsWith("hsl")) return props.color;
@@ -64,22 +59,39 @@ const hslColor = computed(() => {
 <template>
   <div class="horse-wrapper" :style="{ width: size + 10 + 'px' }">
     <p style="font-size: 8px; font-weight: bold">{{ name }}</p>
-    <!-- ghost image to maintain aspect ratio/size -->
+    <!-- Both images in DOM so they load once (and use preload cache); only one sets layout -->
     <img
-      :src="imageSrc"
-      class="horse-ghost"
+      :src="standingSrc"
+      class="horse-ghost horse-ghost--layout"
+      draggable="false"
+      aria-hidden="true"
+      fetchpriority="high"
+    />
+    <img
+      :src="gifSrc"
+      class="horse-ghost horse-ghost--preload"
       draggable="false"
       aria-hidden="true"
       fetchpriority="high"
     />
 
-    <!-- mask overlay that applies the color -->
+    <!-- Mask overlays: one per image so we never change url() and re-fetch -->
     <div
+      v-show="animate"
       class="horse-mask"
       :style="{
         backgroundColor: hslColor,
-        maskImage: `url(${imageSrc})`,
-        WebkitMaskImage: `url(${imageSrc})`,
+        maskImage: `url(${gifSrc})`,
+        WebkitMaskImage: `url(${gifSrc})`,
+      }"
+    />
+    <div
+      v-show="!animate"
+      class="horse-mask"
+      :style="{
+        backgroundColor: hslColor,
+        maskImage: `url(${standingSrc})`,
+        WebkitMaskImage: `url(${standingSrc})`,
       }"
     />
   </div>
@@ -98,6 +110,16 @@ const hslColor = computed(() => {
   height: auto;
   opacity: 0;
   pointer-events: none;
+}
+
+.horse-ghost--layout {
+  /* In flow so wrapper gets height from this image */
+}
+
+.horse-ghost--preload {
+  position: absolute;
+  inset: 0;
+  /* Keeps gif in cache without affecting layout */
 }
 
 .horse-mask {
