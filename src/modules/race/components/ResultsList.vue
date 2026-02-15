@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { useHorseStore } from "../store/horseStore";
 const horseStore = useHorseStore();
 
 const results = computed(() => {

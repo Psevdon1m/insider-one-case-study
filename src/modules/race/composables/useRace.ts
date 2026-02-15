@@ -1,6 +1,5 @@
 import { ROUND_TO_DISTANCE } from "../domain/constants";
 import type { RaceHorse, RaceResult } from "../domain/types";
-import { useHorseStore } from "../store/horseStore";
 
 export function useRace() {
   const TICK_MS = 50;

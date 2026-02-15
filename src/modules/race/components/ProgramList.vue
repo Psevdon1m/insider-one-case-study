@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { RoundType } from "../domain/types";
 
-import { useHorseStore } from "../store/horseStore";
 const horseStore = useHorseStore();
 
 const program = computed(() => {

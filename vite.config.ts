@@ -3,6 +3,7 @@ import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 import tailwindcss from "@tailwindcss/vite";
 import AutoImport from "unplugin-auto-import/vite";
+import Components from "unplugin-vue-components/vite";
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -22,6 +23,9 @@ export default defineConfig({
       imports: [
         // presets
         "vue",
+        {
+          pinia: ["defineStore", "storeToRefs", "acceptHMRUpdate"],
+        },
         // custom
         {
           "@vueuse/core": [
@@ -32,6 +36,14 @@ export default defineConfig({
       ],
       dts: true,
       viteOptimizeDeps: true,
+      dirs: [
+        "src/modules/**/store/**",
+        "src/modules/**/composables/**",
+        "src/core/composables/**",
+      ],
+    }),
+    Components({
+      dirs: ["src/core/components", "src/modules/**/components"],
     }),
   ],
   resolve: {

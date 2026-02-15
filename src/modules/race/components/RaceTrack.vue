@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { RaceHorse } from "../domain/types";
-import HorseSilhouette from "@/core/components/ui/HorseSilhouette.vue";
 
 interface RaceTrackProps {
   raceHorses: RaceHorse[];

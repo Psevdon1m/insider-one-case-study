@@ -1,13 +1,4 @@
 <script setup lang="ts">
-import BaseHeader from "@/core/components/ui/BaseHeader.vue";
-import BaseButton from "@/core/components/ui/BaseButton.vue";
-import HorseList from "../components/HorseList.vue";
-import ResultsAndProgramWrapper from "../components/ResultsAndProgramWrapper.vue";
-import RaceTrack from "../components/RaceTrack.vue";
-
-import { useHorseStore } from "../store/horseStore";
-import { useRace } from "../composables/useRace";
-
 const {
   round,
   getHorsesPerCurrentRound,

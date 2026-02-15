@@ -10,9 +10,6 @@ import type { RoundType } from "../domain/types";
 import { ROUND_TO_DISTANCE } from "../domain/constants";
 
 const roundCount = Object.keys(ROUND_TO_DISTANCE).length as RoundType;
-
-import ProgramList from "./ProgramList.vue";
-import ResultsList from "./ResultsList.vue";
 </script>
 
 <style scoped>
