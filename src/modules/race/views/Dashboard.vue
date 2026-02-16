@@ -93,11 +93,11 @@ const canRestart = computed(() =>
 
     <!-- Main content -->
     <div
-      class="flex flex-1 flex-col 2xl:flex-row gap-2 p-2 overflow-y-auto 2xl:overflow-hidden min-h-0"
+      class="flex flex-1 flex-col xl:flex-row gap-2 p-2 overflow-y-auto xl:overflow-hidden min-h-0"
       data-testid="race-dashboard"
     >
       <!-- Left — Horse List -->
-      <div class="w-full 2xl:w-xs shrink-0 order-2 2xl:order-1">
+      <div class="w-full xl:w-xs shrink-0 order-2 xl:order-1">
         <HorseList
           :horses="horseStore.horses"
           :raceHorses="[...getHorsesPerCurrentRound]"
@@ -107,7 +107,7 @@ const canRestart = computed(() =>
       </div>
 
       <!-- Center — Race Track -->
-      <div class="w-full 2xl:w-4xl overflow-auto order-1 2xl:order-2 min-h-125">
+      <div class="w-full xl:w-4xl overflow-auto order-1 xl:order-2 min-h-125">
         <RaceTrack
           :raceHorses="getHorsesPerCurrentRound"
           :raceStatus
@@ -118,7 +118,7 @@ const canRestart = computed(() =>
 
       <!-- Right — Program & Results  -->
       <div
-        class="w-full 2xl:w-xl min-h-100 2xl:h-full overflow-auto order-3 2xl:order-3"
+        class="w-full xl:w-xl min-h-100 xl:h-full overflow-auto order-3 xl:order-3"
       >
         <ResultsAndProgramWrapper />
       </div>
