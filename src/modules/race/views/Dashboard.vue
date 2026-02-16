@@ -118,7 +118,7 @@ const canRestart = computed(() =>
 
       <!-- Right — Program & Results  -->
       <div
-        class="w-full xl:w-xl min-h-100 xl:h-full overflow-auto order-3 xl:order-3"
+        class="w-full xl:max-w-[26rem] xl:w-96 min-h-100 xl:h-full overflow-auto order-3 xl:order-3 xl:shrink-0"
       >
         <ResultsAndProgramWrapper />
       </div>

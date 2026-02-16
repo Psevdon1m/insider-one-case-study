@@ -24,7 +24,7 @@ defineProps<Props>();
         className="px-3 py-2 text-sm font-semibold text-white"
         :style="{ background: 'hsl(210 70% 50%)' }"
       >
-        Program For The Round: {{ round }}
+        Round: #{{ round }} Program
       </div>
       <div className="flex-1">
         <p
