@@ -2,7 +2,7 @@
   "name": "Horse Racing",
   "short_name": "Horse Racing",
   "description": "Horse Racing app - follow races and results offline",
-  "start_url": "/insider-one-case-study/index.html",
+  "start_url": "/insider-one-case-study/",
   "scope": "/insider-one-case-study/",
   "display": "standalone",
   "orientation": "portrait-primary",
