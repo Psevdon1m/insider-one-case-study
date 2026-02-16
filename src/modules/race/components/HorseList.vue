@@ -44,7 +44,7 @@ watch(
 
 <template>
   <div
-    class="flex flex-col h-full border rounded-lg bg-card shadow-sm overflow-hidden"
+    class="flex flex-col h-full border rounded-lg bg-card shadow-sm min-w-0 overflow-x-auto overflow-y-hidden"
   >
     <div
       class="px-3 py-2 text-sm font-semibold"
@@ -52,8 +52,8 @@ watch(
     >
       Horse List (1–20)
     </div>
-    <div class="flex-1">
-      <table class="w-full text-xs border-separate [border-spacing:0_6px]">
+    <div class="flex-1 min-w-0 overflow-x-auto">
+      <table class="w-full text-xs border-separate [border-spacing:0_6px] min-w-[12rem]">
         <thead>
           <tr class="text-muted-foreground">
             <th

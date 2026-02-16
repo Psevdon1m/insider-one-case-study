@@ -96,8 +96,8 @@ const canRestart = computed(() =>
       class="flex flex-1 flex-col xl:flex-row gap-2 p-2 overflow-y-auto xl:overflow-hidden min-h-0"
       data-testid="race-dashboard"
     >
-      <!-- Left — Horse List -->
-      <div class="w-full xl:w-xs shrink-0 order-2 xl:order-1">
+      <!-- Left — Horse List (wide enough for #, Name, Cond, Color; RaceTrack scrolls horizontally) -->
+      <div class="w-full xl:max-w-[15rem] xl:w-60 xl:shrink-0 order-2 xl:order-1 overflow-auto">
         <HorseList
           :horses="horseStore.horses"
           :raceHorses="[...getHorsesPerCurrentRound]"
@@ -106,8 +106,8 @@ const canRestart = computed(() =>
         />
       </div>
 
-      <!-- Center — Race Track -->
-      <div class="w-full xl:w-4xl overflow-auto order-1 xl:order-2 min-h-125">
+      <!-- Center — Race Track (flex-1 + min-w-0 so it can shrink and scroll horizontally) -->
+      <div class="w-full xl:flex-1 xl:min-w-0 overflow-auto order-1 xl:order-2 min-h-125">
         <RaceTrack
           :raceHorses="getHorsesPerCurrentRound"
           :raceStatus
