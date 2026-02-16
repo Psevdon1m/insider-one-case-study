@@ -52,12 +52,11 @@ const FILES_TO_CACHE = shouldCache(url) ? [url] : [];
 
 // Install: precache the app shell (index.html)
 self.addEventListener("install", (event) => {
-  console.log("[Service Worker] Installing Service Worker... ", event);
   event.waitUntil(
     // waits until cache is not open, otherwise it would go to activation phase
     caches.open(CACHE_NAME).then(function (cache) {
       //update static version on new releases
-      console.log("[Service Worker] Precaching App Shell");
+
       cache.addAll(FILES_TO_CACHE);
     }),
   );
@@ -65,14 +64,13 @@ self.addEventListener("install", (event) => {
 
 // Activate: take control and remove old caches
 self.addEventListener("activate", (event) => {
-  console.log("[Service Worker] Activating Service Worker... ", event);
   event.waitUntil(
     caches.keys().then((keysList) => {
       return Promise.all(
         keysList.map((key) => {
           if (key !== CACHE_NAME) {
             //keep latest version here
-            console.log("[Service Worker] Removing old cache ", key);
+
             return caches.delete(key);
           }
         }),

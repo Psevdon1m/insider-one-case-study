@@ -15,7 +15,6 @@ export function registerSW(): void {
     navigator.serviceWorker
       .register(swUrl, { scope: base })
       .then((reg) => {
-        console.log("[SW] Registered", reg.scope);
         reg.update();
       })
       .catch((err) => {
