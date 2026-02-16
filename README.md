@@ -21,23 +21,23 @@ A Vue 3 desktop application that simulates a 6-round horse racing game with 20 h
 
 ## Requirements Met
 
-| Requirement | Implementation |
-|------------|----------------|
-| **20 horses** | Pool of 20 horses with unique names and colors |
-| **Unique colors** | Each horse has a distinct color (domain-driven generation) |
+| Requirement               | Implementation                                              |
+| ------------------------- | ----------------------------------------------------------- |
+| **20 horses**             | Pool of 20 horses with unique names and colors              |
+| **Unique colors**         | Each horse has a distinct color (domain-driven generation)  |
 | **Condition score 1–100** | Horse condition stored and displayed; degrades after rounds |
-| **6 rounds** | Exactly 6 rounds per race |
-| **10 horses per round** | 10 random horses selected from the 20 for each round |
-| **Round distances** | Round 1: 1200 m → Round 6: 2200 m (200 m step) |
+| **6 rounds**              | Exactly 6 rounds per race                                   |
+| **10 horses per round**   | 10 random horses selected from the 20 for each round        |
+| **Round distances**       | Round 1: 1200 m → Round 6: 2200 m (200 m step)              |
 
 **Round distances (meters):**
 
-- Round 1: 1200  
-- Round 2: 1400  
-- Round 3: 1600  
-- Round 4: 1800  
-- Round 5: 2000  
-- Round 6: 2200  
+- Round 1: 1200
+- Round 2: 1400
+- Round 3: 1600
+- Round 4: 1800
+- Round 5: 2000
+- Round 6: 2200
 
 ---
 
@@ -115,6 +115,14 @@ This keeps features isolated and makes it easy to add or change functionality wi
 
 - **Auto-imports**: Vue APIs (`ref`, `computed`, `watch`, etc.), Pinia helpers, composables, stores, and all components from `src/core/components` and `src/modules/**/components` — no manual imports for these.
 
+## 🚀 Live Demo
+
+[https://psevdon1m.github.io/insider-one-case-study/](https://psevdon1m.github.io/insider-one-case-study/)
+
+## 🎥 Video Demo
+
+[https://www.youtube.com/watch?v=uRxMGO-OH0I](https://www.youtube.com/watch?v=uRxMGO-OH0I)
+
 ---
 
 ## Getting Started
@@ -152,13 +160,13 @@ npm run preview
 
 ## Scripts
 
-| Script | Description |
-|--------|-------------|
-| `npm run dev` | Start Vite dev server |
-| `npm run build` | Type-check (`vue-tsc -b`) and Vite build |
-| `npm run preview` | Serve `dist` (e.g. port 5173) |
-| `npm run cypress:open` | Open Cypress UI |
-| `npm run cypress:run` | Run Cypress E2E (Chrome) |
+| Script                 | Description                              |
+| ---------------------- | ---------------------------------------- |
+| `npm run dev`          | Start Vite dev server                    |
+| `npm run build`        | Type-check (`vue-tsc -b`) and Vite build |
+| `npm run preview`      | Serve `dist` (e.g. port 5173)            |
+| `npm run cypress:open` | Open Cypress UI                          |
+| `npm run cypress:run`  | Run Cypress E2E (Chrome)                 |
 
 ---
 
