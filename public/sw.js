@@ -37,6 +37,7 @@ function shouldCache(url) {
     path.endsWith(".css") ||
     path.endsWith(".svg") ||
     path.endsWith(".png") ||
+    path.endsWith(".gif") ||
     path.endsWith(".woff2") ||
     path.endsWith(".woff") ||
     path.endsWith(".ico") ||
